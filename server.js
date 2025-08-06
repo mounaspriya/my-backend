@@ -7809,19 +7809,37 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 // === Middleware ===
+// app.use(
+//   cors({
+//     origin: ["http://localhost:5173", "http://127.0.0.1:5173","https://my-frontend-steel-mu.vercel.app"],
+//     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//     credentials: true,
+//   }),
+// )
+
+
+// app.use(express.json())
+// app.use(express.urlencoded({ extended: true }))
+// app.use("/uploads", express.static("uploads"))
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://127.0.0.1:5173","https://my-frontend-steel-mu.vercel.app"],
+    origin: ["http://localhost:5173", "http://127.0.0.1:5173", "https://my-frontend-steel-mu.vercel.app"],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
-  }),
+  })
 )
 
-app.options("*", cors());
+app.options("*", cors()); // ✅ Keep this
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use("/uploads", express.static("uploads"))
+
+
+
+
 
 // === Multer File Upload Config ===
 const storage = multer.diskStorage({
