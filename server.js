@@ -7831,7 +7831,7 @@ app.use(
   })
 )
 
-app.options("*", cors()); // ✅ Keep this
+
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
