@@ -1,0 +1,4223 @@
+// const express = require("express");
+// const cors = require("cors");
+// const { Pool } = require("pg");
+// const mongoose = require("mongoose");
+// require("dotenv").config();
+
+// const app = express();
+// const port = process.env.PORT || 5000;
+
+// // Middleware
+// app.use(cors({
+//   origin: 'http://localhost:5173',
+//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//   credentials: true
+// }));
+// app.use(express.json());
+
+// // PostgreSQL connection
+// const pool = new Pool({
+//   user: "postgres",
+//   host: "localhost",
+//   database: "Workstream1",
+//   password: "Ayansh@03", // ⚠️ Use env variable in production
+//   port: 5432,
+// });
+
+// // MongoDB connection
+// mongoose.connect(process.env.MONGO_URI)
+//   .then(() => console.log("MongoDB connected"))
+//   .catch((err) => console.error("MongoDB connection error:", err));
+
+// // === Test Form Submission Route ===
+// app.post("/submit-form", async (req, res) => {
+//   const { name, email, phone, age, city } = req.body;
+
+//   try {
+//     await pool.query(
+//       "INSERT INTO test_form_data (name, email, phone, age, city) VALUES ($1, $2, $3, $4, $5)",
+//       [name, email, phone, age, city]
+//     );
+//     res.status(200).json({ message: "Form submitted successfully!" });
+//   } catch (error) {
+//     console.error("Error inserting test form data:", error);
+//     res.status(500).json({ error: "Database insert failed." });
+//   }
+// });
+
+// // === Workstream Form Submission Route ===
+// // app.post("/submit-workstream", async (req, res) => {
+// //   const {
+// //     accessibility,
+// //     third_party_content,
+// //     conditional_response,
+// //     website_type,
+// //     registration_site,
+// //     comments,
+// //     website_operator,
+// //     owner_name,
+// //     review_date,
+// //     review_traffic,
+// //     images,
+// //     aChecks
+// //   } = req.body;
+
+// //   try {
+// //     await pool.query(
+// //       `INSERT INTO workspace_data (
+// //         accessibility,
+// //         third_party_content,
+// //         conditional_response,
+// //         website_type,
+// //         registration_site,
+// //         comments,
+// //         website_operator,
+// //         owner_name,
+// //         review_date,
+// //         review_traffic,
+// //         images,
+// //         a_checks
+// //       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+// //       [
+// //         accessibility,
+// //         third_party_content,
+// //         conditional_response,
+// //         website_type,
+// //         registration_site,
+// //         comments,
+// //         website_operator,
+// //         owner_name,
+// //         review_date,
+// //         review_traffic,
+// //         JSON.stringify(images),
+// //         JSON.stringify(aChecks)
+// //       ]
+// //     );
+
+// //     res.status(200).json({ message: "Workstream submitted successfully!" });
+// //   } catch (error) {
+// //     console.error("Error inserting workstream data:", error);
+// //     res.status(500).json({ error: "Failed to submit workstream data." });
+// //   }
+// // });
+
+// app.post("/submit-workstream", async (req, res) => {
+//   const {
+//     accessibility,
+//     third_party_content,
+//     conditional_response,
+//     website_type,
+//     registration_site,
+//     comments,
+//     website_operator,
+//     owner_name,
+//     review_date,
+//     review_traffic,
+//     images,
+//     aChecks,
+//     website_source_id // ✅ Added field from frontend dropdown
+//   } = req.body;
+
+//   try {
+//     await pool.query(
+//       `INSERT INTO workspace_data (
+//         accessibility,
+//         third_party_content,
+//         conditional_response,
+//         website_type,
+//         registration_site,
+//         comments,
+//         website_operator,
+//         owner_name,
+//         review_date,
+//         review_traffic,
+//         images,
+//         a_checks,
+//         website_source_id  -- ✅ New foreign key column
+//       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+//       [
+//         accessibility,
+//         third_party_content,
+//         conditional_response,
+//         website_type,
+//         registration_site,
+//         comments,
+//         website_operator,
+//         owner_name,
+//         review_date,
+//         review_traffic,
+//         JSON.stringify(images),
+//         JSON.stringify(aChecks),
+//         website_source_id // ✅ Value from frontend
+//       ]
+//     );
+
+//     res.status(200).json({ message: "Workstream submitted successfully!" });
+//   } catch (error) {
+//     console.error("Error inserting workstream data:", error);
+//     res.status(500).json({ error: "Failed to submit workstream data." });
+//   }
+// });
+
+// // === Auth Routes ===
+// const authRoutes = require("./routes/authRoutes");
+// app.use("/api/auth", authRoutes);
+
+// // === Start Server ===
+// app.listen(port, () => {
+//   console.log(`Server is running on http://localhost:${port}`);
+// });
+
+
+
+
+
+//image upload is not happening in this code
+
+// const express = require("express");
+// const cors = require("cors");
+// const { Pool } = require("pg");
+// const mongoose = require("mongoose");
+// require("dotenv").config();
+
+// const app = express();
+// const port = process.env.PORT || 5000;
+
+// // === Middleware ===
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     credentials: true,
+//   })
+// );
+// app.use(express.json());
+
+// // === PostgreSQL Connection ===
+// const pool = new Pool({
+//   user: "postgres",
+//   host: "localhost",
+//   database: "Workstream1",
+//   password: "Ayansh@03", // ⚠️ Secure in production
+//   port: 5432,
+// });
+
+// // === MongoDB Connection ===
+// mongoose
+//   .connect(process.env.MONGO_URI)
+//   .then(() => console.log("MongoDB connected"))
+//   .catch((err) => console.error("MongoDB connection error:", err));
+
+// // === Test Form Submission ===
+// app.post("/submit-form", async (req, res) => {
+//   const { name, email, phone, age, city } = req.body;
+
+//   try {
+//     await pool.query(
+//       "INSERT INTO test_form_data (name, email, phone, age, city) VALUES ($1, $2, $3, $4, $5)",
+//       [name, email, phone, age, city]
+//     );
+//     res.status(200).json({ message: "Form submitted successfully!" });
+//   } catch (error) {
+//     console.error("Error inserting test form data:", error);
+//     res.status(500).json({ error: "Database insert failed." });
+//   }
+// });
+
+// // === Workstream Form Submission ===
+// app.post("/submit-workstream", async (req, res) => {
+//   const {
+//     accessibility,
+//     third_party_content,
+//     conditional_response,
+//     website_type,
+//     registration_site,
+//     comments,
+//     website_operator,
+//     owner_name,
+//     review_date,
+//     review_traffic,
+//     images,
+//     aChecks,
+//     website_source_id,
+//   } = req.body;
+
+//   try {
+//     await pool.query(
+//       `INSERT INTO workspace_data (
+//         accessibility,
+//         third_party_content,
+//         conditional_response,
+//         website_type,
+//         registration_site,
+//         comments,
+//         website_operator,
+//         owner_name,
+//         review_date,
+//         review_traffic,
+//         images,
+//         a_checks,
+//         website_source_id
+//       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+//       [
+//         accessibility,
+//         third_party_content,
+//         conditional_response,
+//         website_type,
+//         registration_site,
+//         comments,
+//         website_operator,
+//         owner_name,
+//         review_date,
+//         review_traffic,
+//         JSON.stringify(images),
+//         JSON.stringify(aChecks),
+//         website_source_id,
+//       ]
+//     );
+
+//     res.status(200).json({ message: "Workstream submitted successfully!" });
+//   } catch (error) {
+//     console.error("Error inserting workstream data:", error);
+//     res.status(500).json({ error: "Failed to submit workstream data." });
+//   }
+// });
+
+// // === Auto-Suggest Website URL Endpoint ===
+// // app.get("/api/website-suggestions", async (req, res) => {
+// //   const { query } = req.query;
+
+// //   if (!query) return res.json([]);
+
+// //   try {
+// //     const result = await pool.query(
+// //       `SELECT id, website_url, type_of_website
+// //        FROM website_sources
+// //        WHERE website_url ILIKE $1
+// //        LIMIT 10`,
+// //       [`%${query}%`]
+// //     );
+
+// //     res.json(result.rows);
+// //   } catch (error) {
+// //     console.error("Error fetching suggestions:", error);
+// //     res.status(500).json({ error: "Error fetching suggestions" });
+// //   }
+// // });
+// app.get("/api/website-sources", async (req, res) => {
+//   const { search } = req.query;
+
+//   if (!search) return res.json([]);
+
+//   try {
+//     const result = await pool.query(
+//       "SELECT id, website_url FROM website_sources WHERE website_url ILIKE $1 LIMIT 10",
+//       [`%${search}%`]
+//     );
+//     res.json(result.rows);
+//   } catch (error) {
+//     console.error("❌ Error in /api/website-sources:", error.message);
+//     res.status(500).json({ error: error.message });
+//   }
+// });
+
+
+// // === Auth Routes (Optional) ===
+// const authRoutes = require("./routes/authRoutes");
+// app.use("/api/auth", authRoutes);
+
+// // === Start Server ===
+// app.listen(port, () => {
+//   console.log(`Server is running on http://localhost:${port}`);
+// });
+
+
+
+// without autoselect add requirement
+
+// const express = require("express")
+// const cors = require("cors")
+// const { Pool } = require("pg")
+// const mongoose = require("mongoose")
+// const multer = require("multer")
+// const path = require("path")
+// const fs = require("fs")
+// require("dotenv").config()
+
+// const app = express()
+// const port = process.env.PORT || 5000
+
+// // Create uploads directory if it doesn't exist
+// const uploadsDir = path.join(__dirname, "uploads")
+// if (!fs.existsSync(uploadsDir)) {
+//   fs.mkdirSync(uploadsDir, { recursive: true })
+// }
+
+// // === Middleware ===
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     credentials: true,
+//   }),
+// )
+// app.use(express.json())
+
+// // Serve static files from uploads directory
+// app.use("/uploads", express.static("uploads"))
+
+// // === Multer Configuration for File Uploads ===
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, "uploads/")
+//   },
+//   filename: (req, file, cb) => {
+//     // Generate unique filename with timestamp
+//     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9)
+//     cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname))
+//   },
+// })
+
+// const upload = multer({
+//   storage: storage,
+//   limits: {
+//     fileSize: 10 * 1024 * 1024, // 10MB limit
+//   },
+//   fileFilter: (req, file, cb) => {
+//     // Check if file is an image
+//     if (file.mimetype.startsWith("image/")) {
+//       cb(null, true)
+//     } else {
+//       cb(new Error("Only image files are allowed!"), false)
+//     }
+//   },
+// })
+
+// // === PostgreSQL Connection ===
+// const pool = new Pool({
+//   user: "postgres",
+//   host: "localhost",
+//   database: "Workstream1",
+//   password: "Ayansh@03", // ⚠️ Secure in production
+//   port: 5432,
+// })
+
+// // === MongoDB Connection ===
+// mongoose
+//   .connect(process.env.MONGO_URI)
+//   .then(() => console.log("MongoDB connected"))
+//   .catch((err) => console.error("MongoDB connection error:", err))
+
+// // === Test Form Submission ===
+// app.post("/submit-form", async (req, res) => {
+//   const { name, email, phone, age, city } = req.body
+
+//   try {
+//     await pool.query("INSERT INTO test_form_data (name, email, phone, age, city) VALUES ($1, $2, $3, $4, $5)", [
+//       name,
+//       email,
+//       phone,
+//       age,
+//       city,
+//     ])
+//     res.status(200).json({ message: "Form submitted successfully!" })
+//   } catch (error) {
+//     console.error("Error inserting test form data:", error)
+//     res.status(500).json({ error: "Database insert failed." })
+//   }
+// })
+
+// // === Workstream Form Submission with File Upload ===
+// app.post("/submit-workstream", upload.array("images", 10), async (req, res) => {
+//   const {
+//     accessibility,
+//     third_party_content,
+//     conditional_response,
+//     website_type,
+//     registration_site,
+//     comments,
+//     website_operator,
+//     owner_name,
+//     review_date,
+//     review_traffic,
+//     aChecks,
+//     website_source_id,
+//   } = req.body
+
+//   try {
+//     // Process uploaded files
+//     const imageData = req.files
+//       ? req.files.map((file) => ({
+//           filename: file.filename,
+//           originalname: file.originalname,
+//           path: file.path,
+//           size: file.size,
+//           mimetype: file.mimetype,
+//           url: `${req.protocol}://${req.get("host")}/uploads/${file.filename}`,
+//         }))
+//       : []
+
+//     await pool.query(
+//       `INSERT INTO workspace_data (
+//         accessibility,
+//         third_party_content,
+//         conditional_response,
+//         website_type,
+//         registration_site,
+//         comments,
+//         website_operator,
+//         owner_name,
+//         review_date,
+//         review_traffic,
+//         images,
+//         a_checks,
+//         website_source_id
+//       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+//       [
+//         accessibility,
+//         third_party_content,
+//         conditional_response,
+//         website_type,
+//         registration_site,
+//         comments,
+//         website_operator,
+//         owner_name,
+//         review_date,
+//         review_traffic,
+//         JSON.stringify(imageData),
+//         JSON.stringify(JSON.parse(aChecks || "[]")),
+//         website_source_id,
+//       ],
+//     )
+
+//     res.status(200).json({
+//       message: "Workstream submitted successfully!",
+//       uploadedFiles: imageData.length,
+//       images: imageData,
+//     })
+//   } catch (error) {
+//     console.error("Error inserting workstream data:", error)
+
+//     // Clean up uploaded files if database insert fails
+//     if (req.files) {
+//       req.files.forEach((file) => {
+//         fs.unlink(file.path, (err) => {
+//           if (err) console.error("Error deleting file:", err)
+//         })
+//       })
+//     }
+
+//     res.status(500).json({ error: "Failed to submit workstream data." })
+//   }
+// })
+
+// // === Auto-Suggest Website URL Endpoint ===
+// app.get("/api/website-sources", async (req, res) => {
+//   const { search } = req.query
+
+//   if (!search) return res.json([])
+
+//   try {
+//     const result = await pool.query("SELECT id, website_url FROM website_sources WHERE website_url ILIKE $1 LIMIT 10", [
+//       `%${search}%`,
+//     ])
+//     res.json(result.rows)
+//   } catch (error) {
+//     console.error("❌ Error in /api/website-sources:", error.message)
+//     res.status(500).json({ error: error.message })
+//   }
+// })
+
+// // === Auth Routes (Optional) ===
+// const authRoutes = require("./routes/authRoutes")
+// app.use("/api/auth", authRoutes)
+
+// // === Error handling middleware ===
+// app.use((error, req, res, next) => {
+//   if (error instanceof multer.MulterError) {
+//     if (error.code === "LIMIT_FILE_SIZE") {
+//       return res.status(400).json({ error: "File too large. Maximum size is 10MB." })
+//     }
+//     if (error.code === "LIMIT_FILE_COUNT") {
+//       return res.status(400).json({ error: "Too many files. Maximum is 10 files." })
+//     }
+//   }
+
+//   if (error.message === "Only image files are allowed!") {
+//     return res.status(400).json({ error: "Only image files are allowed!" })
+//   }
+
+//   res.status(500).json({ error: "Something went wrong!" })
+// })
+
+// // === Start Server ===
+// app.listen(port, () => {
+//   console.log(`Server is running on http://localhost:${port}`)
+// })
+
+
+
+// code of autosuggest reuired field
+
+// const express = require("express");
+// const cors = require("cors");
+// const { Pool } = require("pg");
+// const mongoose = require("mongoose");
+// const multer = require("multer");
+// const path = require("path");
+// const fs = require("fs");
+// require("dotenv").config();
+
+// const app = express();
+// const port = process.env.PORT || 5000;
+
+// // Create uploads directory if it doesn't exist
+// const uploadsDir = path.join(__dirname, "uploads");
+// if (!fs.existsSync(uploadsDir)) {
+//   fs.mkdirSync(uploadsDir, { recursive: true });
+// }
+
+// // === Middleware ===
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     credentials: true,
+//   })
+// );
+// app.use(express.json());
+
+// // Serve static files from uploads directory
+// app.use("/uploads", express.static("uploads"));
+
+// // === Multer Configuration for File Uploads ===
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, "uploads/");
+//   },
+//   filename: (req, file, cb) => {
+//     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+//     cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname));
+//   },
+// });
+
+// const upload = multer({
+//   storage: storage,
+//   limits: {
+//     fileSize: 10 * 1024 * 1024, // 10MB limit
+//   },
+//   fileFilter: (req, file, cb) => {
+//     if (file.mimetype.startsWith("image/")) {
+//       cb(null, true);
+//     } else {
+//       cb(new Error("Only image files are allowed!"), false);
+//     }
+//   },
+// });
+
+// // === PostgreSQL Connection ===
+// const pool = new Pool({
+//   user: "postgres",
+//   host: "localhost",
+//   database: "Workstream1",
+//   password: "Ayansh@03", // ⚠️ Secure in production
+//   port: 5432,
+// });
+
+// // === MongoDB Connection ===
+// mongoose
+//   .connect(process.env.MONGO_URI)
+//   .then(() => console.log("MongoDB connected"))
+//   .catch((err) => console.error("MongoDB connection error:", err));
+
+// // === Test Form Submission ===
+// app.post("/submit-form", async (req, res) => {
+//   const { name, email, phone, age, city } = req.body;
+
+//   try {
+//     await pool.query("INSERT INTO test_form_data (name, email, phone, age, city) VALUES ($1, $2, $3, $4, $5)", [
+//       name,
+//       email,
+//       phone,
+//       age,
+//       city,
+//     ]);
+//     res.status(200).json({ message: "Form submitted successfully!" });
+//   } catch (error) {
+//     console.error("Error inserting test form data:", error);
+//     res.status(500).json({ error: "Database insert failed." });
+//   }
+// });
+
+// // === Workstream Form Submission with File Upload ===
+// app.post("/submit-workstream", upload.array("images", 10), async (req, res) => {
+//   const {
+//     accessibility,
+//     third_party_content,
+//     conditional_response,
+//     website_type,
+//     registration_site,
+//     comments,
+//     website_operator,
+//     owner_name,
+//     review_date,
+//     review_traffic,
+//     aChecks,
+//     website_source_id,
+//   } = req.body;
+
+//   try {
+//     const imageData = req.files
+//       ? req.files.map((file) => ({
+//           filename: file.filename,
+//           originalname: file.originalname,
+//           path: file.path,
+//           size: file.size,
+//           mimetype: file.mimetype,
+//           url: `${req.protocol}://${req.get("host")}/uploads/${file.filename}`,
+//         }))
+//       : [];
+
+//     await pool.query(
+//       `INSERT INTO workspace_data (
+//         accessibility,
+//         third_party_content,
+//         conditional_response,
+//         website_type,
+//         registration_site,
+//         comments,
+//         website_operator,
+//         owner_name,
+//         review_date,
+//         review_traffic,
+//         images,
+//         a_checks,
+//         website_source_id
+//       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+//       [
+//         accessibility,
+//         third_party_content,
+//         conditional_response,
+//         website_type,
+//         registration_site,
+//         comments,
+//         website_operator,
+//         owner_name,
+//         review_date,
+//         review_traffic,
+//         JSON.stringify(imageData),
+//         JSON.stringify(JSON.parse(aChecks || "[]")),
+//         website_source_id,
+//       ]
+//     );
+
+//     res.status(200).json({
+//       message: "Workstream submitted successfully!",
+//       uploadedFiles: imageData.length,
+//       images: imageData,
+//     });
+//   } catch (error) {
+//     console.error("Error inserting workstream data:", error);
+
+//     if (req.files) {
+//       req.files.forEach((file) => {
+//         fs.unlink(file.path, (err) => {
+//           if (err) console.error("Error deleting file:", err);
+//         });
+//       });
+//     }
+
+//     res.status(500).json({ error: "Failed to submit workstream data." });
+//   }
+// });
+
+// // === Auto-Suggest Website URL GET Endpoint ===
+// app.get("/api/website-sources", async (req, res) => {
+//   const { search } = req.query;
+
+//   if (!search) return res.json([]);
+
+//   try {
+//     const result = await pool.query(
+//       "SELECT id, website_url FROM website_sources WHERE website_url ILIKE $1 LIMIT 10",
+//       [`%${search}%`]
+//     );
+//     res.json(result.rows);
+//   } catch (error) {
+//     console.error("❌ Error in /api/website-sources:", error.message);
+//     res.status(500).json({ error: error.message });
+//   }
+// });
+
+// // === New: Add Website Source POST Endpoint ===
+// app.post("/api/website-sources", async (req, res) => {
+//   const { website_url } = req.body;
+
+//   if (!website_url) {
+//     return res.status(400).json({ error: "website_url is required" });
+//   }
+
+//   try {
+//     // Check if it already exists
+//     const existing = await pool.query("SELECT id FROM website_sources WHERE website_url = $1", [website_url]);
+
+//     if (existing.rows.length > 0) {
+//       return res.status(200).json({ message: "URL already exists", id: existing.rows[0].id });
+//     }
+
+//     // Insert new URL
+//     const result = await pool.query(
+//       "INSERT INTO website_sources (website_url) VALUES ($1) RETURNING id, website_url",
+//       [website_url]
+//     );
+
+//     res.status(201).json({ message: "Website URL added successfully", ...result.rows[0] });
+//   } catch (error) {
+//     console.error("❌ Error in POST /api/website-sources:", error.message);
+//     res.status(500).json({ error: "Failed to add website URL" });
+//   }
+// });
+
+// // === Auth Routes (Optional) ===
+// const authRoutes = require("./routes/authRoutes");
+// app.use("/api/auth", authRoutes);
+
+// // === Error handling middleware ===
+// app.use((error, req, res, next) => {
+//   if (error instanceof multer.MulterError) {
+//     if (error.code === "LIMIT_FILE_SIZE") {
+//       return res.status(400).json({ error: "File too large. Maximum size is 10MB." });
+//     }
+//     if (error.code === "LIMIT_FILE_COUNT") {
+//       return res.status(400).json({ error: "Too many files. Maximum is 10 files." });
+//     }
+//   }
+
+//   if (error.message === "Only image files are allowed!") {
+//     return res.status(400).json({ error: "Only image files are allowed!" });
+//   }
+
+//   res.status(500).json({ error: "Something went wrong!" });
+// });
+
+// // === Start Server ===
+// app.listen(port, () => {
+//   console.log(`🚀 Server is running on http://localhost:${port}`);
+// });
+
+
+
+
+
+
+// neww codeeeeeeeeeeeeeeeeeeeeeeee
+
+// const express = require("express")
+// const cors = require("cors")
+// const { Pool } = require("pg")
+// const mongoose = require("mongoose")
+// const multer = require("multer")
+// const path = require("path")
+// const fs = require("fs")
+// require("dotenv").config()
+
+// const app = express()
+// const port = process.env.PORT || 5000
+
+// // Create uploads directory if it doesn't exist
+// const uploadsDir = path.join(__dirname, "uploads")
+// if (!fs.existsSync(uploadsDir)) {
+//   fs.mkdirSync(uploadsDir, { recursive: true })
+// }
+
+// // === Middleware ===
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     credentials: true,
+//   }),
+// )
+// app.use(express.json())
+
+// // Serve static files from uploads directory
+// app.use("/uploads", express.static("uploads"))
+
+// // === Multer Configuration for File Uploads ===
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, "uploads/")
+//   },
+//   filename: (req, file, cb) => {
+//     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9)
+//     cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname))
+//   },
+// })
+
+// const upload = multer({
+//   storage: storage,
+//   limits: {
+//     fileSize: 10 * 1024 * 1024, // 10MB limit
+//   },
+//   fileFilter: (req, file, cb) => {
+//     if (file.mimetype.startsWith("image/")) {
+//       cb(null, true)
+//     } else {
+//       cb(new Error("Only image files are allowed!"), false)
+//     }
+//   },
+// })
+
+// // === PostgreSQL Connection ===
+// const pool = new Pool({
+//   user: "postgres",
+//   host: "localhost",
+//   database: "Workstream1",
+//   password: "Ayansh@03", // ⚠️ Secure in production
+//   port: 5432,
+// })
+
+// // Test database connection
+// pool.connect((err, client, release) => {
+//   if (err) {
+//     console.error("❌ Error connecting to PostgreSQL:", err.stack)
+//   } else {
+//     console.log("✅ PostgreSQL connected successfully")
+//     release()
+//   }
+// })
+
+// // === MongoDB Connection ===
+// mongoose
+//   .connect(process.env.MONGO_URI || "mongodb://localhost:27017/workstream")
+//   .then(() => console.log("✅ MongoDB connected"))
+//   .catch((err) => console.error("❌ MongoDB connection error:", err))
+
+// // === Test Form Submission ===
+// app.post("/submit-form", async (req, res) => {
+//   const { name, email, phone, age, city } = req.body
+
+//   try {
+//     await pool.query("INSERT INTO test_form_data (name, email, phone, age, city) VALUES ($1, $2, $3, $4, $5)", [
+//       name,
+//       email,
+//       phone,
+//       age,
+//       city,
+//     ])
+//     res.status(200).json({ message: "Form submitted successfully!" })
+//   } catch (error) {
+//     console.error("Error inserting test form data:", error)
+//     res.status(500).json({ error: "Database insert failed." })
+//   }
+// })
+
+// // === Auto-Suggest Website URL GET Endpoint ===
+// app.get("/api/website-sources", async (req, res) => {
+//   const { search } = req.query
+
+//   if (!search) return res.json([])
+
+//   try {
+//     const result = await pool.query("SELECT id, website_url FROM website_sources WHERE website_url ILIKE $1 LIMIT 10", [
+//       `%${search}%`,
+//     ])
+//     console.log(`🔍 Search for "${search}" returned ${result.rows.length} results`)
+//     res.json(result.rows)
+//   } catch (error) {
+//     console.error("❌ Error in /api/website-sources:", error.message)
+//     res.status(500).json({ error: error.message })
+//   }
+// })
+
+// // === Check if URL exists endpoint ===
+// app.get("/api/website-sources/check", async (req, res) => {
+//   const { url } = req.query
+
+//   console.log(`🔍 Checking URL: ${url}`)
+
+//   if (!url) {
+//     return res.status(400).json({ error: "URL parameter is required" })
+//   }
+
+//   try {
+//     const result = await pool.query("SELECT id, website_url FROM website_sources WHERE website_url = $1", [url])
+
+//     if (result.rows.length > 0) {
+//       console.log(`✅ URL exists: ${url} with ID: ${result.rows[0].id}`)
+//       res.json({ exists: true, data: result.rows[0] })
+//     } else {
+//       console.log(`❌ URL does not exist: ${url}`)
+//       res.json({ exists: false })
+//     }
+//   } catch (error) {
+//     console.error("❌ Error checking URL:", error.message)
+//     res.status(500).json({ error: "Failed to check URL" })
+//   }
+// })
+
+// // === Add Website Source POST Endpoint ===
+// app.post("/api/website-sources", async (req, res) => {
+//   const { website_url } = req.body
+
+//   console.log(`➕ Adding new URL: ${website_url}`)
+
+//   if (!website_url) {
+//     return res.status(400).json({ error: "website_url is required" })
+//   }
+
+//   try {
+//     // Check if it already exists
+//     const existing = await pool.query("SELECT id FROM website_sources WHERE website_url = $1", [website_url])
+
+//     if (existing.rows.length > 0) {
+//       console.log(`⚠️ URL already exists: ${website_url}`)
+//       return res.status(200).json({ message: "URL already exists", id: existing.rows[0].id })
+//     }
+
+//     // Insert new URL
+//     const result = await pool.query("INSERT INTO website_sources (website_url) VALUES ($1) RETURNING id, website_url", [
+//       website_url,
+//     ])
+
+//     console.log(`✅ New URL added: ${website_url} with ID: ${result.rows[0].id}`)
+//     res.status(201).json({ message: "Website URL added successfully", ...result.rows[0] })
+//   } catch (error) {
+//     console.error("❌ Error in POST /api/website-sources:", error.message)
+//     res.status(500).json({ error: "Failed to add website URL" })
+//   }
+// })
+
+// // === Workstream Form Submission with File Upload ===
+// app.post("/submit-workstream", upload.array("images", 10), async (req, res) => {
+//   console.log("📝 Workstream form submission received")
+//   console.log("Form data:", req.body)
+
+//   const {
+//     accessibility,
+//     third_party_content,
+//     conditional_response,
+//     website_type,
+//     registration_site,
+//     comments,
+//     website_operator,
+//     owner_name,
+//     review_date,
+//     review_traffic,
+//     aChecks,
+//     website_source_id,
+//     website_url,
+//   } = req.body
+
+//   try {
+//     let finalWebsiteSourceId = website_source_id
+
+//     // If no website_source_id but we have a website_url, handle it
+//     if (!website_source_id && website_url) {
+//       console.log(`🔍 No website_source_id provided, checking URL: ${website_url}`)
+
+//       // Check if URL already exists
+//       const existingUrl = await pool.query("SELECT id FROM website_sources WHERE website_url = $1", [website_url])
+
+//       if (existingUrl.rows.length > 0) {
+//         finalWebsiteSourceId = existingUrl.rows[0].id
+//         console.log(`✅ Found existing URL with ID: ${finalWebsiteSourceId}`)
+//       } else {
+//         // Create new URL entry
+//         const newUrl = await pool.query("INSERT INTO website_sources (website_url) VALUES ($1) RETURNING id", [
+//           website_url,
+//         ])
+//         finalWebsiteSourceId = newUrl.rows[0].id
+//         console.log(`✅ Created new URL entry with ID: ${finalWebsiteSourceId}`)
+//       }
+//     }
+
+//     const imageData = req.files
+//       ? req.files.map((file) => ({
+//           filename: file.filename,
+//           originalname: file.originalname,
+//           path: file.path,
+//           size: file.size,
+//           mimetype: file.mimetype,
+//           url: `${req.protocol}://${req.get("host")}/uploads/${file.filename}`,
+//         }))
+//       : []
+
+//     console.log(`📸 Processing ${imageData.length} images`)
+
+//     await pool.query(
+//       `INSERT INTO workspace_data (
+//         accessibility,
+//         third_party_content,
+//         conditional_response,
+//         website_type,
+//         registration_site,
+//         comments,
+//         website_operator,
+//         owner_name,
+//         review_date,
+//         review_traffic,
+//         images,
+//         a_checks,
+//         website_source_id
+//       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+//       [
+//         accessibility,
+//         third_party_content,
+//         conditional_response,
+//         website_type,
+//         registration_site,
+//         comments,
+//         website_operator,
+//         owner_name,
+//         review_date,
+//         review_traffic,
+//         JSON.stringify(imageData),
+//         JSON.stringify(JSON.parse(aChecks || "[]")),
+//         finalWebsiteSourceId,
+//       ],
+//     )
+
+//     console.log("✅ Workstream data inserted successfully")
+
+//     res.status(200).json({
+//       message: "Workstream submitted successfully!",
+//       uploadedFiles: imageData.length,
+//       images: imageData,
+//       website_source_id: finalWebsiteSourceId,
+//     })
+//   } catch (error) {
+//     console.error("❌ Error inserting workstream data:", error)
+
+//     // Clean up uploaded files on error
+//     if (req.files) {
+//       req.files.forEach((file) => {
+//         fs.unlink(file.path, (err) => {
+//           if (err) console.error("Error deleting file:", err)
+//         })
+//       })
+//     }
+
+//     res.status(500).json({ error: "Failed to submit workstream data: " + error.message })
+//   }
+// })
+
+// // === Error handling middleware ===
+// app.use((error, req, res, next) => {
+//   console.error("❌ Unhandled error:", error)
+
+//   if (error instanceof multer.MulterError) {
+//     if (error.code === "LIMIT_FILE_SIZE") {
+//       return res.status(400).json({ error: "File too large. Maximum size is 10MB." })
+//     }
+//     if (error.code === "LIMIT_FILE_COUNT") {
+//       return res.status(400).json({ error: "Too many files. Maximum is 10 files." })
+//     }
+//   }
+
+//   if (error.message === "Only image files are allowed!") {
+//     return res.status(400).json({ error: "Only image files are allowed!" })
+//   }
+
+//   res.status(500).json({ error: "Something went wrong!" })
+// })
+
+// // === Start Server ===
+// app.listen(port, () => {
+//   console.log(`🚀 Server is running on http://localhost:${port}`)
+//   console.log(`📋 Available endpoints:`)
+//   console.log(`   GET  /api/website-sources - Search URLs`)
+//   console.log(`   GET  /api/website-sources/check - Check if URL exists`)
+//   console.log(`   POST /api/website-sources - Add new URL`)
+//   console.log(`   POST /submit-workstream - Submit form`)
+// })
+
+
+
+//not saved friday, month,year
+
+// const express = require("express")
+// const cors = require("cors")
+// const { Pool } = require("pg")
+// const mongoose = require("mongoose")
+// const multer = require("multer")
+// const path = require("path")
+// const fs = require("fs")
+// require("dotenv").config()
+
+// const app = express()
+// const port = process.env.PORT || 5000
+
+// // Create uploads directory if it doesn't exist
+// const uploadsDir = path.join(__dirname, "uploads")
+// if (!fs.existsSync(uploadsDir)) {
+//   fs.mkdirSync(uploadsDir, { recursive: true })
+// }
+
+// // === Middleware ===
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     credentials: true,
+//   }),
+// )
+// app.use(express.json())
+// app.use("/uploads", express.static("uploads")) // Serve image files
+
+// // === Multer File Upload Config ===
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => cb(null, "uploads/"),
+//   filename: (req, file, cb) => {
+//     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9)
+//     cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname))
+//   },
+// })
+// const upload = multer({
+//   storage,
+//   limits: { fileSize: 10 * 1024 * 1024 },
+//   fileFilter: (req, file, cb) => {
+//     file.mimetype.startsWith("image/") ? cb(null, true) : cb(new Error("Only image files are allowed!"), false)
+//   },
+// })
+
+// // === PostgreSQL Connection ===
+// const pool = new Pool({
+//   user: "postgres",
+//   host: "localhost",
+//   database: "Workstream1",
+//   password: "Ayansh@03", // ⚠️ Change in production
+//   port: 5432,
+// })
+// pool.connect((err, client, release) => {
+//   if (err) console.error("❌ PostgreSQL connection error:", err.stack)
+//   else {
+//     console.log("✅ PostgreSQL connected")
+//     release()
+//   }
+// })
+
+// // === MongoDB (Optional) ===
+// mongoose
+//   .connect(process.env.MONGO_URI || "mongodb://localhost:27017/workstream")
+//   .then(() => console.log("✅ MongoDB connected"))
+//   .catch((err) => console.error("❌ MongoDB error:", err))
+
+// // === Test Form Submission ===
+// app.post("/submit-form", async (req, res) => {
+//   const { name, email, phone, age, city } = req.body
+//   try {
+//     await pool.query("INSERT INTO test_form_data (name, email, phone, age, city) VALUES ($1, $2, $3, $4, $5)", [
+//       name, email, phone, age, city,
+//     ])
+//     res.status(200).json({ message: "Form submitted successfully!" })
+//   } catch (error) {
+//     console.error("Error inserting test form data:", error)
+//     res.status(500).json({ error: "Database insert failed." })
+//   }
+// })
+
+// // === Auto-suggest URL APIs ===
+// app.get("/api/website-sources", async (req, res) => {
+//   const { search } = req.query
+//   if (!search) return res.json([])
+
+//   try {
+//     const result = await pool.query(
+//       "SELECT id, website_url FROM website_sources WHERE website_url ILIKE $1 LIMIT 10",
+//       [`%${search}%`]
+//     )
+//     res.json(result.rows)
+//   } catch (error) {
+//     console.error("❌ /api/website-sources error:", error.message)
+//     res.status(500).json({ error: error.message })
+//   }
+// })
+
+// app.get("/api/website-sources/check", async (req, res) => {
+//   const { url } = req.query
+//   if (!url) return res.status(400).json({ error: "URL parameter is required" })
+
+//   try {
+//     const result = await pool.query("SELECT id, website_url FROM website_sources WHERE website_url = $1", [url])
+//     res.json(result.rows.length > 0
+//       ? { exists: true, data: result.rows[0] }
+//       : { exists: false })
+//   } catch (error) {
+//     console.error("❌ Error checking URL:", error.message)
+//     res.status(500).json({ error: "Failed to check URL" })
+//   }
+// })
+
+// app.post("/api/website-sources", async (req, res) => {
+//   const { website_url } = req.body
+//   if (!website_url) return res.status(400).json({ error: "website_url is required" })
+
+//   try {
+//     const existing = await pool.query("SELECT id FROM website_sources WHERE website_url = $1", [website_url])
+//     if (existing.rows.length > 0) {
+//       return res.status(200).json({ message: "URL already exists", id: existing.rows[0].id })
+//     }
+
+//     const result = await pool.query(
+//       "INSERT INTO website_sources (website_url) VALUES ($1) RETURNING id, website_url",
+//       [website_url]
+//     )
+//     res.status(201).json({ message: "Website URL added", ...result.rows[0] })
+//   } catch (error) {
+//     console.error("❌ POST /api/website-sources error:", error.message)
+//     res.status(500).json({ error: "Failed to add website URL" })
+//   }
+// })
+
+// // === Submit Workstream Form ===
+// app.post("/submit-workstream", upload.array("images", 10), async (req, res) => {
+//   const {
+//     accessibility,
+//     third_party_content,
+//     conditional_response,
+//     website_type,
+//     registration_site,
+//     comments,
+//     website_operator,
+//     owner_name,
+//     review_date,
+//     review_traffic,
+//     aChecks,
+//     website_source_id,
+//     website_url,
+//   } = req.body
+
+//   try {
+//     let finalWebsiteSourceId = website_source_id
+
+//     // Handle URL creation if missing
+//     if (!website_source_id && website_url) {
+//       const existingUrl = await pool.query("SELECT id FROM website_sources WHERE website_url = $1", [website_url])
+//       if (existingUrl.rows.length > 0) {
+//         finalWebsiteSourceId = existingUrl.rows[0].id
+//       } else {
+//         const newUrl = await pool.query("INSERT INTO website_sources (website_url) VALUES ($1) RETURNING id", [website_url])
+//         finalWebsiteSourceId = newUrl.rows[0].id
+//       }
+//     }
+
+//     const imageData = req.files?.map((file) => ({
+//       filename: file.filename,
+//       originalname: file.originalname,
+//       path: file.path,
+//       size: file.size,
+//       mimetype: file.mimetype,
+//       url: `${req.protocol}://${req.get("host")}/uploads/${file.filename}`,
+//     })) || []
+
+//     await pool.query(
+//       `INSERT INTO workspace_data (
+//         accessibility, third_party_content, conditional_response, website_type,
+//         registration_site, comments, website_operator, owner_name, review_date,
+//         review_traffic, images, a_checks, website_source_id
+//       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+//       [
+//         accessibility, third_party_content, conditional_response, website_type,
+//         registration_site, comments, website_operator, owner_name, review_date,
+//         review_traffic, JSON.stringify(imageData), JSON.parse(aChecks || "[]"), finalWebsiteSourceId,
+//       ]
+//     )
+
+//     res.status(200).json({
+//       message: "Workstream submitted successfully!",
+//       images: imageData,
+//       website_source_id: finalWebsiteSourceId,
+//     })
+//   } catch (error) {
+//     console.error("❌ Workstream insert error:", error)
+//     if (req.files) {
+//       req.files.forEach((file) => {
+//         fs.unlink(file.path, (err) => err && console.error("Error deleting file:", err))
+//       })
+//     }
+//     res.status(500).json({ error: "Failed to submit workstream data: " + error.message })
+//   }
+// })
+
+// // ✅ ✅ ✅ NEW: Get All Workstream Entries ✅ ✅ ✅
+// app.get("/api/workspace_data", async (req, res) => {
+//   try {
+//     const result = await pool.query("SELECT * FROM workspace_data");
+//     res.json(result.rows);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("Server Error");
+//   }
+// });
+// // app.get("/api/workstream-data", async (req, res) => {
+// //   try {
+// //     const result = await pool.query("SELECT * FROM workspace_data ORDER BY id DESC");
+// //     res.json(result.rows);
+// //   } catch (error) {
+// //     console.error("Error fetching data:", error);
+// //     res.status(500).json({ error: "Internal Server Error" });
+// //   }
+// // });
+
+// // === Error Middleware ===
+
+// // api to get data for each id
+
+// app.get("/api/workspace_data/:id", async (req, res) => {
+//   const id = req.params.id;
+
+//   try {
+//     const result = await pool.query("SELECT * FROM workspace_data WHERE id = $1", [id]);
+//     if (result.rows.length === 0) {
+//       return res.status(404).json({ message: "Record not found" });
+//     }
+//     res.json(result.rows[0]);
+//   } catch (err) {
+//     console.error("Error fetching workspace_data by ID:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// });
+
+
+// app.use((error, req, res, next) => {
+//   console.error("❌ Unhandled error:", error)
+//   if (error instanceof multer.MulterError) {
+//     if (error.code === "LIMIT_FILE_SIZE") {
+//       return res.status(400).json({ error: "File too large (max 10MB)" })
+//     }
+//     if (error.code === "LIMIT_FILE_COUNT") {
+//       return res.status(400).json({ error: "Too many files (max 10)" })
+//     }
+//   }
+
+//   if (error.message === "Only image files are allowed!") {
+//     return res.status(400).json({ error: "Only image files are allowed!" })
+//   }
+
+//   res.status(500).json({ error: "Something went wrong!" })
+// })
+
+// // === Start Server ===
+// app.listen(port, () => {
+//   console.log(`🚀 Server is running on http://localhost:${port}`)
+//   console.log(`📋 Endpoints:
+//   → POST /submit-form
+//   → GET  /api/website-sources
+//   → GET  /api/website-sources/check
+//   → POST /api/website-sources
+//   → POST /submit-workstream
+//   → GET  /get-workstreams ✅`)
+// })
+
+
+
+// const express = require("express")
+// const cors = require("cors")
+// const { Pool } = require("pg")
+// const multer = require("multer")
+// const path = require("path")
+// const fs = require("fs")
+// require("dotenv").config()
+
+// const app = express()
+// const port = process.env.PORT || 5000
+
+// // Create uploads directory if it doesn't exist
+// const uploadsDir = path.join(__dirname, "uploads")
+// if (!fs.existsSync(uploadsDir)) {
+//   fs.mkdirSync(uploadsDir, { recursive: true })
+// }
+
+// // === Middleware ===
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     credentials: true,
+//   }),
+// )
+// app.use(express.json())
+// app.use("/uploads", express.static("uploads"))
+
+// // === Multer File Upload Config ===
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => cb(null, "uploads/"),
+//   filename: (req, file, cb) => {
+//     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9)
+//     cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname))
+//   },
+// })
+// const upload = multer({
+//   storage,
+//   limits: { fileSize: 10 * 1024 * 1024 },
+//   fileFilter: (req, file, cb) => {
+//     file.mimetype.startsWith("image/") ? cb(null, true) : cb(new Error("Only image files are allowed!"), false)
+//   },
+// })
+
+// // === PostgreSQL Connection ===
+// const pool = new Pool({
+//   user: "postgres",
+//   host: "localhost",
+//   database: "Workstream1",
+//   password: "Ayansh@03",
+//   port: 5432,
+// })
+
+// // === Helper Functions ===
+// const getFridayOfWeek = (dateStr) => {
+//   if (!dateStr) return null
+//   try {
+//     const date = new Date(dateStr)
+//     if (isNaN(date.getTime())) return null
+
+//     const day = date.getDay()
+//     const diff = 5 - day
+//     const friday = new Date(date)
+//     friday.setDate(date.getDate() + diff)
+//     return friday.toISOString().split("T")[0]
+//   } catch (error) {
+//     console.error("❌ Error calculating Friday:", error)
+//     return null
+//   }
+// }
+
+// const getMonthAndYear = (dateStr) => {
+//   if (!dateStr) return { month: null, year: null }
+//   try {
+//     const date = new Date(dateStr)
+//     if (isNaN(date.getTime())) return { month: null, year: null }
+
+//     return {
+//       month: date.toLocaleString("default", { month: "long" }),
+//       year: date.getFullYear(),
+//     }
+//   } catch (error) {
+//     console.error("❌ Error calculating month/year:", error)
+//     return { month: null, year: null }
+//   }
+// }
+
+// // === Helper function to safely stringify JSON ===
+// const safeJSONStringify = (data, fallback = "[]") => {
+//   try {
+//     if (data === null || data === undefined) {
+//       return fallback
+//     }
+
+//     // If it's already a string, try to parse and re-stringify to validate
+//     if (typeof data === "string") {
+//       const parsed = JSON.parse(data)
+//       return JSON.stringify(parsed)
+//     }
+
+//     // If it's an object/array, stringify it
+//     return JSON.stringify(data)
+//   } catch (error) {
+//     console.error("❌ JSON stringify error:", error)
+//     console.error("❌ Problematic data:", data)
+//     return fallback
+//   }
+// }
+
+// // === Auto-suggest URL APIs ===
+// app.get("/api/website-sources", async (req, res) => {
+//   const { search } = req.query
+//   if (!search) return res.json([])
+
+//   try {
+//     const result = await pool.query("SELECT id, website_url FROM website_sources WHERE website_url ILIKE $1 LIMIT 10", [
+//       `%${search}%`,
+//     ])
+//     res.json(result.rows)
+//   } catch (error) {
+//     console.error("❌ /api/website-sources error:", error.message)
+//     res.status(500).json({ error: error.message })
+//   }
+// })
+
+// // === Submit Workstream Form ===
+// app.post("/submit-workstream", upload.array("images", 10), async (req, res) => {
+//   console.log("🚀 === FORM SUBMISSION START ===")
+//   console.log("📝 Request body:", req.body)
+//   console.log("🖼️ Files count:", req.files?.length || 0)
+
+//   try {
+//     const {
+//       accessibility,
+//       third_party_content,
+//       conditional_response,
+//       website_type,
+//       registration_site,
+//       comments,
+//       website_operator,
+//       owner_name,
+//       review_date,
+//       calculated_friday,
+//       review_month,
+//       review_year,
+//       review_traffic,
+//       aChecks,
+//       website_source_id,
+//       website_url,
+//     } = req.body
+
+//     // Handle website source ID
+//     let finalWebsiteSourceId = website_source_id
+
+//     if (!website_source_id && website_url) {
+//       console.log("🔍 Creating/finding website source for:", website_url)
+//       try {
+//         const existingUrl = await pool.query("SELECT id FROM website_sources WHERE website_url = $1", [website_url])
+//         if (existingUrl.rows.length > 0) {
+//           finalWebsiteSourceId = existingUrl.rows[0].id
+//           console.log("✅ Found existing URL with ID:", finalWebsiteSourceId)
+//         } else {
+//           const newUrl = await pool.query("INSERT INTO website_sources (website_url) VALUES ($1) RETURNING id", [
+//             website_url,
+//           ])
+//           finalWebsiteSourceId = newUrl.rows[0].id
+//           console.log("✅ Created new URL with ID:", finalWebsiteSourceId)
+//         }
+//       } catch (urlError) {
+//         console.error("❌ Error handling website URL:", urlError)
+//         throw new Error(`Website URL error: ${urlError.message}`)
+//       }
+//     }
+
+//     // Calculate date fields
+//     const finalCalculatedFriday = calculated_friday || getFridayOfWeek(review_date)
+//     const { month, year } = getMonthAndYear(review_date)
+//     const finalReviewMonth = review_month || month
+//     const finalReviewYear = review_year || year
+
+//     console.log("📅 Date calculations:")
+//     console.log("- review_date:", review_date)
+//     console.log("- calculated_friday:", finalCalculatedFriday)
+//     console.log("- review_month:", finalReviewMonth)
+//     console.log("- review_year:", finalReviewYear)
+
+//     // Process images safely
+//     let imageData = []
+//     if (req.files && req.files.length > 0) {
+//       imageData = req.files.map((file) => ({
+//         filename: file.filename,
+//         originalname: file.originalname,
+//         size: file.size,
+//         mimetype: file.mimetype,
+//         url: `${req.protocol}://${req.get("host")}/uploads/${file.filename}`,
+//       }))
+//     }
+//     console.log("🖼️ Processed images:", imageData.length)
+
+//     // Process aChecks safely
+//     let parsedAChecks = []
+//     console.log("🔍 Raw aChecks:", typeof aChecks, aChecks)
+
+//     if (aChecks) {
+//       try {
+//         if (typeof aChecks === "string") {
+//           parsedAChecks = JSON.parse(aChecks)
+//         } else if (Array.isArray(aChecks)) {
+//           parsedAChecks = aChecks
+//         } else {
+//           parsedAChecks = []
+//         }
+//         console.log("✅ Parsed aChecks:", parsedAChecks.length, "items")
+//       } catch (parseError) {
+//         console.error("❌ Error parsing aChecks:", parseError)
+//         console.error("❌ aChecks value:", aChecks)
+//         parsedAChecks = []
+//       }
+//     }
+
+//     // Safely stringify JSON data
+//     const imagesJSON = safeJSONStringify(imageData, "[]")
+//     const aChecksJSON = safeJSONStringify(parsedAChecks, "[]")
+
+//     console.log("🔍 JSON strings to insert:")
+//     console.log("- imagesJSON:", imagesJSON.substring(0, 100) + "...")
+//     console.log("- aChecksJSON:", aChecksJSON.substring(0, 100) + "...")
+
+//     // Prepare values for database insertion
+//     const insertValues = [
+//       accessibility || null,
+//       third_party_content || null,
+//       conditional_response || null,
+//       website_type || null,
+//       registration_site || null,
+//       comments || null,
+//       website_operator || null,
+//       owner_name || null,
+//       review_date || null,
+//       finalCalculatedFriday,
+//       finalReviewMonth,
+//       finalReviewYear,
+//       review_traffic || null,
+//       imagesJSON, // Already stringified
+//       aChecksJSON, // Already stringified
+//       finalWebsiteSourceId || null,
+//     ]
+
+//     console.log("🗃️ Final values for insertion:")
+//     insertValues.forEach((value, index) => {
+//       const displayValue = typeof value === "string" && value.length > 50 ? value.substring(0, 50) + "..." : value
+//       console.log(`  $${index + 1}:`, typeof value, displayValue)
+//     })
+
+//     // Execute the INSERT query
+//     const insertQuery = `
+//       INSERT INTO workspace_data (
+//         accessibility, third_party_content, conditional_response, website_type,
+//         registration_site, comments, website_operator, owner_name, review_date,
+//         calculated_friday, review_month, review_year,
+//         review_traffic, images, a_checks, website_source_id
+//       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+//       RETURNING id
+//     `
+
+//     console.log("🔄 Executing database insert...")
+//     const result = await pool.query(insertQuery, insertValues)
+//     console.log("✅ Database insert successful! New ID:", result.rows[0].id)
+
+//     res.status(200).json({
+//       message: "Workstream submitted successfully!",
+//       id: result.rows[0].id,
+//       images: imageData,
+//       website_source_id: finalWebsiteSourceId,
+//       calculated_friday: finalCalculatedFriday,
+//       review_month: finalReviewMonth,
+//       review_year: finalReviewYear,
+//     })
+
+//     console.log("🎉 === FORM SUBMISSION SUCCESS ===")
+//   } catch (error) {
+//     console.error("💥 === FORM SUBMISSION ERROR ===")
+//     console.error("Error message:", error.message)
+//     console.error("Error code:", error.code)
+//     console.error("Error detail:", error.detail)
+//     console.error("Full error:", error)
+
+//     // Clean up uploaded files on error
+//     if (req.files) {
+//       req.files.forEach((file) => {
+//         fs.unlink(file.path, (err) => {
+//           if (err) console.error("Error deleting file:", err)
+//         })
+//       })
+//     }
+
+//     res.status(500).json({
+//       error: "Failed to submit workstream data",
+//       message: error.message,
+//       code: error.code,
+//       detail: error.detail,
+//     })
+//   }
+// })
+
+// // === Get All Workstream Entries ===
+// app.get("/api/workspace_data", async (req, res) => {
+//   try {
+//     const result = await pool.query("SELECT * FROM workspace_data ORDER BY id DESC")
+//     res.json(result.rows)
+//   } catch (err) {
+//     console.error("❌ Error fetching all workspace data:", err)
+//     res.status(500).json({ error: "Server Error", message: err.message })
+//   }
+// })
+
+// // === Get Single Workstream Entry by ID ===
+// app.get("/api/workspace_data/:id", async (req, res) => {
+//   const id = req.params.id
+
+//   try {
+//     const result = await pool.query("SELECT * FROM workspace_data WHERE id = $1", [id])
+//     if (result.rows.length === 0) {
+//       return res.status(404).json({ message: "Record not found" })
+//     }
+//     res.json(result.rows[0])
+//   } catch (err) {
+//     console.error("❌ Error fetching workspace_data by ID:", err)
+//     res.status(500).json({ message: "Server error", error: err.message })
+//   }
+// })
+
+// // === Update Workstream Entry by ID ===
+// app.put("/api/workspace_data/:id", async (req, res) => {
+//   const id = req.params.id
+//   console.log("🔄 Updating record ID:", id)
+
+//   try {
+//     const {
+//       accessibility,
+//       third_party_content,
+//       conditional_response,
+//       website_type,
+//       registration_site,
+//       comments,
+//       website_operator,
+//       owner_name,
+//       review_date,
+//       calculated_friday,
+//       review_month,
+//       review_year,
+//       review_traffic,
+//       website_source_id,
+//     } = req.body
+
+//     // Calculate date fields if not provided
+//     const finalCalculatedFriday = calculated_friday || getFridayOfWeek(review_date)
+//     const { month, year } = getMonthAndYear(review_date)
+//     const finalReviewMonth = review_month || month
+//     const finalReviewYear = review_year || year
+
+//     const updateQuery = `
+//       UPDATE workspace_data SET 
+//         accessibility = $1,
+//         third_party_content = $2,
+//         conditional_response = $3,
+//         website_type = $4,
+//         registration_site = $5,
+//         comments = $6,
+//         website_operator = $7,
+//         owner_name = $8,
+//         review_date = $9,
+//         calculated_friday = $10,
+//         review_month = $11,
+//         review_year = $12,
+//         review_traffic = $13,
+//         website_source_id = $14
+//       WHERE id = $15
+//       RETURNING *
+//     `
+
+//     const updateValues = [
+//       accessibility,
+//       third_party_content,
+//       conditional_response,
+//       website_type,
+//       registration_site,
+//       comments,
+//       website_operator,
+//       owner_name,
+//       review_date,
+//       finalCalculatedFriday,
+//       finalReviewMonth,
+//       finalReviewYear,
+//       review_traffic,
+//       website_source_id,
+//       id,
+//     ]
+
+//     const result = await pool.query(updateQuery, updateValues)
+
+//     if (result.rows.length === 0) {
+//       return res.status(404).json({ message: "Record not found" })
+//     }
+
+//     console.log("✅ Update successful")
+//     res.json({
+//       message: "Record updated successfully",
+//       data: result.rows[0],
+//     })
+//   } catch (err) {
+//     console.error("❌ Error updating workspace_data:", err)
+//     res.status(500).json({ message: "Server error", error: err.message })
+//   }
+// })
+
+// // === Error Middleware ===
+// app.use((error, req, res, next) => {
+//   console.error("❌ Unhandled error:", error)
+//   res.status(500).json({ error: "Something went wrong!", message: error.message })
+// })
+
+// // === Start Server ===
+// app.listen(port, () => {
+//   console.log(`🚀 Server is running on http://localhost:${port}`)
+// })
+
+
+// without delete code
+// const express = require("express")
+// const cors = require("cors")
+// const { Pool } = require("pg")
+// const multer = require("multer")
+// const path = require("path")
+// const fs = require("fs")
+// require("dotenv").config()
+
+// const app = express()
+// const port = process.env.PORT || 5000
+
+// // Create uploads directory if it doesn't exist
+// const uploadsDir = path.join(__dirname, "uploads")
+// if (!fs.existsSync(uploadsDir)) {
+//   fs.mkdirSync(uploadsDir, { recursive: true })
+// }
+
+// // === Middleware ===
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     credentials: true,
+//   }),
+// )
+// app.use(express.json())
+// app.use("/uploads", express.static("uploads"))
+
+// // === Multer File Upload Config ===
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => cb(null, "uploads/"),
+//   filename: (req, file, cb) => {
+//     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9)
+//     cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname))
+//   },
+// })
+// const upload = multer({
+//   storage,
+//   limits: { fileSize: 10 * 1024 * 1024 },
+//   fileFilter: (req, file, cb) => {
+//     file.mimetype.startsWith("image/") ? cb(null, true) : cb(new Error("Only image files are allowed!"), false)
+//   },
+// })
+
+// // === PostgreSQL Connection ===
+// const pool = new Pool({
+//   user: "postgres",
+//   host: "localhost",
+//   database: "Workstream1",
+//   password: "Ayansh@03",
+//   port: 5432,
+// })
+
+// // === Helper Functions ===
+// const getFridayOfWeek = (dateStr) => {
+//   if (!dateStr) return null
+//   try {
+//     const date = new Date(dateStr)
+//     if (isNaN(date.getTime())) return null
+
+//     const day = date.getDay()
+//     const diff = 5 - day
+//     const friday = new Date(date)
+//     friday.setDate(date.getDate() + diff)
+//     return friday.toISOString().split("T")[0]
+//   } catch (error) {
+//     console.error("❌ Error calculating Friday:", error)
+//     return null
+//   }
+// }
+
+// const getMonthAndYear = (dateStr) => {
+//   if (!dateStr) return { month: null, year: null }
+//   try {
+//     const date = new Date(dateStr)
+//     if (isNaN(date.getTime())) return { month: null, year: null }
+
+//     return {
+//       month: date.toLocaleString("default", { month: "long" }),
+//       year: date.getFullYear(),
+//     }
+//   } catch (error) {
+//     console.error("❌ Error calculating month/year:", error)
+//     return { month: null, year: null }
+//   }
+// }
+
+// // === Helper function to safely stringify JSON ===
+// const safeJSONStringify = (data, fallback = "[]") => {
+//   try {
+//     if (data === null || data === undefined) {
+//       return fallback
+//     }
+
+//     if (typeof data === "string") {
+//       const parsed = JSON.parse(data)
+//       return JSON.stringify(parsed)
+//     }
+
+//     return JSON.stringify(data)
+//   } catch (error) {
+//     console.error("❌ JSON stringify error:", error)
+//     console.error("❌ Problematic data:", data)
+//     return fallback
+//   }
+// }
+
+// // === Auto-suggest URL APIs ===
+// app.get("/api/website-sources", async (req, res) => {
+//   const { search } = req.query
+//   if (!search) return res.json([])
+
+//   try {
+//     const result = await pool.query("SELECT id, website_url FROM website_sources WHERE website_url ILIKE $1 LIMIT 10", [
+//       `%${search}%`,
+//     ])
+//     res.json(result.rows)
+//   } catch (error) {
+//     console.error("❌ /api/website-sources error:", error.message)
+//     res.status(500).json({ error: error.message })
+//   }
+// })
+
+// // === Submit Workstream Form ===
+// app.post("/submit-workstream", upload.array("images", 10), async (req, res) => {
+//   console.log("🚀 === FORM SUBMISSION START ===")
+//   console.log("📝 Request body:", req.body)
+//   console.log("🖼️ Files count:", req.files?.length || 0)
+
+//   try {
+//     const {
+//       accessibility,
+//       third_party_content,
+//       conditional_response,
+//       website_type,
+//       registration_site,
+//       comments,
+//       website_operator,
+//       owner_name,
+//       review_date,
+//       calculated_friday,
+//       review_month,
+//       review_year,
+//       review_traffic,
+//       aChecks,
+//       website_source_id,
+//       website_url,
+//     } = req.body
+
+//     // Handle website source ID
+//     let finalWebsiteSourceId = website_source_id
+
+//     if (!website_source_id && website_url) {
+//       console.log("🔍 Creating/finding website source for:", website_url)
+//       try {
+//         const existingUrl = await pool.query("SELECT id FROM website_sources WHERE website_url = $1", [website_url])
+//         if (existingUrl.rows.length > 0) {
+//           finalWebsiteSourceId = existingUrl.rows[0].id
+//           console.log("✅ Found existing URL with ID:", finalWebsiteSourceId)
+//         } else {
+//           const newUrl = await pool.query("INSERT INTO website_sources (website_url) VALUES ($1) RETURNING id", [
+//             website_url,
+//           ])
+//           finalWebsiteSourceId = newUrl.rows[0].id
+//           console.log("✅ Created new URL with ID:", finalWebsiteSourceId)
+//         }
+//       } catch (urlError) {
+//         console.error("❌ Error handling website URL:", urlError)
+//         throw new Error(`Website URL error: ${urlError.message}`)
+//       }
+//     }
+
+//     // Calculate date fields
+//     const finalCalculatedFriday = calculated_friday || getFridayOfWeek(review_date)
+//     const { month, year } = getMonthAndYear(review_date)
+//     const finalReviewMonth = review_month || month
+//     const finalReviewYear = review_year || year
+
+//     console.log("📅 Date calculations:")
+//     console.log("- review_date:", review_date)
+//     console.log("- calculated_friday:", finalCalculatedFriday)
+//     console.log("- review_month:", finalReviewMonth)
+//     console.log("- review_year:", finalReviewYear)
+
+//     // Process images safely
+//     let imageData = []
+//     if (req.files && req.files.length > 0) {
+//       imageData = req.files.map((file) => ({
+//         filename: file.filename,
+//         originalname: file.originalname,
+//         size: file.size,
+//         mimetype: file.mimetype,
+//         url: `${req.protocol}://${req.get("host")}/uploads/${file.filename}`,
+//       }))
+//     }
+//     console.log("🖼️ Processed images:", imageData.length)
+
+//     // Process aChecks safely
+//     let parsedAChecks = []
+//     console.log("🔍 Raw aChecks:", typeof aChecks, aChecks)
+
+//     if (aChecks) {
+//       try {
+//         if (typeof aChecks === "string") {
+//           parsedAChecks = JSON.parse(aChecks)
+//         } else if (Array.isArray(aChecks)) {
+//           parsedAChecks = aChecks
+//         } else {
+//           parsedAChecks = []
+//         }
+//         console.log("✅ Parsed aChecks:", parsedAChecks.length, "items")
+//       } catch (parseError) {
+//         console.error("❌ Error parsing aChecks:", parseError)
+//         console.error("❌ aChecks value:", aChecks)
+//         parsedAChecks = []
+//       }
+//     }
+
+//     // Safely stringify JSON data
+//     const imagesJSON = safeJSONStringify(imageData, "[]")
+//     const aChecksJSON = safeJSONStringify(parsedAChecks, "[]")
+
+//     console.log("🔍 JSON strings to insert:")
+//     console.log("- imagesJSON:", imagesJSON.substring(0, 100) + "...")
+//     console.log("- aChecksJSON:", aChecksJSON.substring(0, 100) + "...")
+
+//     // Prepare values for database insertion
+//     const insertValues = [
+//       accessibility || null,
+//       third_party_content || null,
+//       conditional_response || null,
+//       website_type || null,
+//       registration_site || null,
+//       comments || null,
+//       website_operator || null,
+//       owner_name || null,
+//       review_date || null,
+//       finalCalculatedFriday,
+//       finalReviewMonth,
+//       finalReviewYear,
+//       review_traffic || null,
+//       imagesJSON,
+//       aChecksJSON,
+//       finalWebsiteSourceId || null,
+//     ]
+
+//     console.log("🗃️ Final values for insertion:")
+//     insertValues.forEach((value, index) => {
+//       const displayValue = typeof value === "string" && value.length > 50 ? value.substring(0, 50) + "..." : value
+//       console.log(`  $${index + 1}:`, typeof value, displayValue)
+//     })
+
+//     // Execute the INSERT query
+//     const insertQuery = `
+//       INSERT INTO workspace_data (
+//         accessibility, third_party_content, conditional_response, website_type,
+//         registration_site, comments, website_operator, owner_name, review_date,
+//         calculated_friday, review_month, review_year,
+//         review_traffic, images, a_checks, website_source_id
+//       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+//       RETURNING id
+//     `
+
+//     console.log("🔄 Executing database insert...")
+//     const result = await pool.query(insertQuery, insertValues)
+//     console.log("✅ Database insert successful! New ID:", result.rows[0].id)
+
+//     res.status(200).json({
+//       message: "Workstream submitted successfully!",
+//       id: result.rows[0].id,
+//       images: imageData,
+//       website_source_id: finalWebsiteSourceId,
+//       calculated_friday: finalCalculatedFriday,
+//       review_month: finalReviewMonth,
+//       review_year: finalReviewYear,
+//     })
+
+//     console.log("🎉 === FORM SUBMISSION SUCCESS ===")
+//   } catch (error) {
+//     console.error("💥 === FORM SUBMISSION ERROR ===")
+//     console.error("Error message:", error.message)
+//     console.error("Error code:", error.code)
+//     console.error("Error detail:", error.detail)
+//     console.error("Full error:", error)
+
+//     // Clean up uploaded files on error
+//     if (req.files) {
+//       req.files.forEach((file) => {
+//         fs.unlink(file.path, (err) => {
+//           if (err) console.error("Error deleting file:", err)
+//         })
+//       })
+//     }
+
+//     res.status(500).json({
+//       error: "Failed to submit workstream data",
+//       message: error.message,
+//       code: error.code,
+//       detail: error.detail,
+//     })
+//   }
+// })
+
+// // === Get All Workstream Entries WITH website_url ===
+// app.get("/api/workspace_data", async (req, res) => {
+//   try {
+//     const result = await pool.query(`
+//       SELECT 
+//         wd.*,
+//         ws.website_url
+//       FROM workspace_data wd
+//       LEFT JOIN website_sources ws ON wd.website_source_id = ws.id
+//       ORDER BY wd.id DESC
+//     `)
+//     res.json(result.rows)
+//   } catch (err) {
+//     console.error("❌ Error fetching all workspace data:", err)
+//     res.status(500).json({ error: "Server Error", message: err.message })
+//   }
+// })
+
+// // === UPDATED: Get Single Workstream Entry by ID WITH website_url ===
+// app.get("/api/workspace_data/:id", async (req, res) => {
+//   const id = req.params.id
+
+//   try {
+//     console.log("🔍 Fetching workspace data for ID:", id)
+
+//     // JOIN workspace_data with website_sources to get the website_url
+//     const result = await pool.query(
+//       `
+//       SELECT 
+//         wd.*,
+//         ws.website_url
+//       FROM workspace_data wd
+//       LEFT JOIN website_sources ws ON wd.website_source_id = ws.id
+//       WHERE wd.id = $1
+//     `,
+//       [id],
+//     )
+
+//     if (result.rows.length === 0) {
+//       return res.status(404).json({ message: "Record not found" })
+//     }
+
+//     console.log("✅ Found record with website_url:", result.rows[0].website_url)
+//     res.json(result.rows[0])
+//   } catch (err) {
+//     console.error("❌ Error fetching workspace_data by ID:", err)
+//     res.status(500).json({ message: "Server error", error: err.message })
+//   }
+// })
+
+// // === Update Workstream Entry by ID ===
+// app.put("/api/workspace_data/:id", async (req, res) => {
+//   const id = req.params.id
+//   console.log("🔄 Updating record ID:", id)
+//   console.log("📝 Update data received:", req.body)
+
+//   try {
+//     const {
+//       accessibility,
+//       third_party_content,
+//       conditional_response,
+//       website_type,
+//       registration_site,
+//       comments,
+//       website_operator,
+//       owner_name,
+//       review_date,
+//       calculated_friday,
+//       review_month,
+//       review_year,
+//       review_traffic,
+//       website_source_id,
+//       website_url, // NEW: Handle website_url updates
+//     } = req.body
+
+//     // Handle website URL updates
+//     let finalWebsiteSourceId = website_source_id
+
+//     if (website_url && (!website_source_id || website_source_id === "")) {
+//       console.log("🔍 Finding/creating website source for URL:", website_url)
+//       try {
+//         const existingUrl = await pool.query("SELECT id FROM website_sources WHERE website_url = $1", [website_url])
+//         if (existingUrl.rows.length > 0) {
+//           finalWebsiteSourceId = existingUrl.rows[0].id
+//           console.log("✅ Found existing URL with ID:", finalWebsiteSourceId)
+//         } else {
+//           const newUrl = await pool.query("INSERT INTO website_sources (website_url) VALUES ($1) RETURNING id", [
+//             website_url,
+//           ])
+//           finalWebsiteSourceId = newUrl.rows[0].id
+//           console.log("✅ Created new URL with ID:", finalWebsiteSourceId)
+//         }
+//       } catch (urlError) {
+//         console.error("❌ Error handling website URL:", urlError)
+//         throw new Error(`Website URL error: ${urlError.message}`)
+//       }
+//     }
+
+//     // Calculate date fields if not provided
+//     const finalCalculatedFriday = calculated_friday || getFridayOfWeek(review_date)
+//     const { month, year } = getMonthAndYear(review_date)
+//     const finalReviewMonth = review_month || month
+//     const finalReviewYear = review_year || year
+
+//     console.log("📅 Final calculated values:")
+//     console.log("- calculated_friday:", finalCalculatedFriday)
+//     console.log("- review_month:", finalReviewMonth)
+//     console.log("- review_year:", finalReviewYear)
+//     console.log("- website_source_id:", finalWebsiteSourceId)
+
+//     const updateQuery = `
+//       UPDATE workspace_data SET 
+//         accessibility = $1,
+//         third_party_content = $2,
+//         conditional_response = $3,
+//         website_type = $4,
+//         registration_site = $5,
+//         comments = $6,
+//         website_operator = $7,
+//         owner_name = $8,
+//         review_date = $9,
+//         calculated_friday = $10,
+//         review_month = $11,
+//         review_year = $12,
+//         review_traffic = $13,
+//         website_source_id = $14
+//       WHERE id = $15
+//       RETURNING *
+//     `
+
+//     const updateValues = [
+//       accessibility,
+//       third_party_content,
+//       conditional_response,
+//       website_type,
+//       registration_site,
+//       comments,
+//       website_operator,
+//       owner_name,
+//       review_date,
+//       finalCalculatedFriday,
+//       finalReviewMonth,
+//       finalReviewYear,
+//       review_traffic,
+//       finalWebsiteSourceId,
+//       id,
+//     ]
+
+//     console.log("🔄 Executing update query...")
+//     const result = await pool.query(updateQuery, updateValues)
+
+//     if (result.rows.length === 0) {
+//       return res.status(404).json({ message: "Record not found" })
+//     }
+
+//     // Fetch the updated record with website_url for response
+//     const updatedRecord = await pool.query(
+//       `
+//       SELECT 
+//         wd.*,
+//         ws.website_url
+//       FROM workspace_data wd
+//       LEFT JOIN website_sources ws ON wd.website_source_id = ws.id
+//       WHERE wd.id = $1
+//     `,
+//       [id],
+//     )
+
+//     console.log("✅ Update successful")
+//     res.json({
+//       message: "Record updated successfully",
+//       data: updatedRecord.rows[0],
+//     })
+//   } catch (err) {
+//     console.error("❌ Error updating workspace_data:", err)
+//     res.status(500).json({ message: "Server error", error: err.message })
+//   }
+// })
+
+// // === Error Middleware ===
+// app.use((error, req, res, next) => {
+//   console.error("❌ Unhandled error:", error)
+//   res.status(500).json({ error: "Something went wrong!", message: error.message })
+// })
+
+// // === Start Server ===
+// app.listen(port, () => {
+//   console.log(`🚀 Server is running on http://localhost:${port}`)
+//   console.log(`📋 Updated endpoints:
+//   → GET  /api/workspace_data (now includes website_url)
+//   → GET  /api/workspace_data/:id (now includes website_url) ✅ UPDATED
+//   → PUT  /api/workspace_data/:id (now handles website_url updates) ✅ UPDATED`)
+// })
+
+// code with wrong date time zone
+
+// const express = require("express")
+// const cors = require("cors")
+// const { Pool } = require("pg")
+// const multer = require("multer")
+// const path = require("path")
+// const fs = require("fs")
+// require("dotenv").config()
+
+// const app = express()
+// const port = process.env.PORT || 5000
+
+// // Create uploads directory if it doesn't exist
+// const uploadsDir = path.join(__dirname, "uploads")
+// if (!fs.existsSync(uploadsDir)) {
+//   fs.mkdirSync(uploadsDir, { recursive: true })
+// }
+
+// // === Middleware ===
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     credentials: true,
+//   }),
+// )
+// app.use(express.json())
+// app.use("/uploads", express.static("uploads"))
+
+// // === Multer File Upload Config ===
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => cb(null, "uploads/"),
+//   filename: (req, file, cb) => {
+//     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9)
+//     cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname))
+//   },
+// })
+// const upload = multer({
+//   storage,
+//   limits: { fileSize: 10 * 1024 * 1024 },
+//   fileFilter: (req, file, cb) => {
+//     file.mimetype.startsWith("image/") ? cb(null, true) : cb(new Error("Only image files are allowed!"), false)
+//   },
+// })
+
+// // === PostgreSQL Connection ===
+// const pool = new Pool({
+//   user: "postgres",
+//   host: "localhost",
+//   database: "Workstream1",
+//   password: "Ayansh@03",
+//   port: 5432,
+// })
+
+// // === FIXED: Helper Functions for proper date handling ===
+// const getFridayOfWeek = (dateStr) => {
+//   if (!dateStr) return null
+//   try {
+//     // Parse date as local date to avoid timezone issues
+//     const [year, month, day] = dateStr.split("-").map(Number)
+//     const date = new Date(year, month - 1, day) // month is 0-indexed
+
+//     if (isNaN(date.getTime())) return null
+
+//     const dayOfWeek = date.getDay()
+//     const diff = 5 - dayOfWeek // 5 = Friday
+//     const friday = new Date(date)
+//     friday.setDate(date.getDate() + diff)
+
+//     // Format as YYYY-MM-DD
+//     return (
+//       friday.getFullYear() +
+//       "-" +
+//       String(friday.getMonth() + 1).padStart(2, "0") +
+//       "-" +
+//       String(friday.getDate()).padStart(2, "0")
+//     )
+//   } catch (error) {
+//     console.error("❌ Error calculating Friday:", error)
+//     return null
+//   }
+// }
+
+// const getMonthAndYear = (dateStr) => {
+//   if (!dateStr) return { month: null, year: null }
+//   try {
+//     // Parse date as local date to avoid timezone issues
+//     const [year, month, day] = dateStr.split("-").map(Number)
+//     const date = new Date(year, month - 1, day) // month is 0-indexed
+
+//     if (isNaN(date.getTime())) return { month: null, year: null }
+
+//     return {
+//       month: date.toLocaleString("default", { month: "long" }),
+//       year: date.getFullYear(),
+//     }
+//   } catch (error) {
+//     console.error("❌ Error calculating month/year:", error)
+//     return { month: null, year: null }
+//   }
+// }
+
+// // === Helper function to format date for database storage ===
+// const formatDateForDB = (dateStr) => {
+//   if (!dateStr) return null
+//   try {
+//     // Ensure we store the date as-is without timezone conversion
+//     const [year, month, day] = dateStr.split("-").map(Number)
+//     const date = new Date(year, month - 1, day)
+//     return date.toISOString().split("T")[0] // Returns YYYY-MM-DD
+//   } catch (error) {
+//     console.error("❌ Error formatting date for DB:", error)
+//     return null
+//   }
+// }
+
+// // === Helper function to format date from database ===
+// const formatDateFromDB = (dbDate) => {
+//   if (!dbDate) return null
+//   try {
+//     // Extract just the date part, ignoring timezone
+//     const date = new Date(dbDate)
+//     return date.toISOString().split("T")[0] // Returns YYYY-MM-DD
+//   } catch (error) {
+//     console.error("❌ Error formatting date from DB:", error)
+//     return null
+//   }
+// }
+
+// // === Helper function to safely stringify JSON ===
+// const safeJSONStringify = (data, fallback = "[]") => {
+//   try {
+//     if (data === null || data === undefined) {
+//       return fallback
+//     }
+
+//     if (typeof data === "string") {
+//       const parsed = JSON.parse(data)
+//       return JSON.stringify(parsed)
+//     }
+
+//     return JSON.stringify(data)
+//   } catch (error) {
+//     console.error("❌ JSON stringify error:", error)
+//     console.error("❌ Problematic data:", data)
+//     return fallback
+//   }
+// }
+
+// // === Auto-suggest URL APIs ===
+// app.get("/api/website-sources", async (req, res) => {
+//   const { search } = req.query
+//   if (!search) return res.json([])
+
+//   try {
+//     const result = await pool.query("SELECT id, website_url FROM website_sources WHERE website_url ILIKE $1 LIMIT 10", [
+//       `%${search}%`,
+//     ])
+//     res.json(result.rows)
+//   } catch (error) {
+//     console.error("❌ /api/website-sources error:", error.message)
+//     res.status(500).json({ error: error.message })
+//   }
+// })
+
+// // === Submit Workstream Form ===
+// app.post("/submit-workstream", upload.array("images", 10), async (req, res) => {
+//   console.log("🚀 === FORM SUBMISSION START ===")
+//   console.log("📝 Request body:", req.body)
+//   console.log("🖼️ Files count:", req.files?.length || 0)
+
+//   try {
+//     const {
+//       accessibility,
+//       third_party_content,
+//       conditional_response,
+//       website_type,
+//       registration_site,
+//       comments,
+//       website_operator,
+//       owner_name,
+//       review_date,
+//       calculated_friday,
+//       review_month,
+//       review_year,
+//       review_traffic,
+//       aChecks,
+//       website_source_id,
+//       website_url,
+//     } = req.body
+
+//     // Handle website source ID
+//     let finalWebsiteSourceId = website_source_id
+
+//     if (!website_source_id && website_url) {
+//       console.log("🔍 Creating/finding website source for:", website_url)
+//       try {
+//         const existingUrl = await pool.query("SELECT id FROM website_sources WHERE website_url = $1", [website_url])
+//         if (existingUrl.rows.length > 0) {
+//           finalWebsiteSourceId = existingUrl.rows[0].id
+//           console.log("✅ Found existing URL with ID:", finalWebsiteSourceId)
+//         } else {
+//           const newUrl = await pool.query("INSERT INTO website_sources (website_url) VALUES ($1) RETURNING id", [
+//             website_url,
+//           ])
+//           finalWebsiteSourceId = newUrl.rows[0].id
+//           console.log("✅ Created new URL with ID:", finalWebsiteSourceId)
+//         }
+//       } catch (urlError) {
+//         console.error("❌ Error handling website URL:", urlError)
+//         throw new Error(`Website URL error: ${urlError.message}`)
+//       }
+//     }
+
+//     // FIXED: Calculate date fields with proper date handling
+//     const finalCalculatedFriday = calculated_friday || getFridayOfWeek(review_date)
+//     const { month, year } = getMonthAndYear(review_date)
+//     const finalReviewMonth = review_month || month
+//     const finalReviewYear = review_year || year
+
+//     console.log("📅 Date calculations:")
+//     console.log("- review_date:", review_date)
+//     console.log("- calculated_friday:", finalCalculatedFriday)
+//     console.log("- review_month:", finalReviewMonth)
+//     console.log("- review_year:", finalReviewYear)
+
+//     // Process images safely
+//     let imageData = []
+//     if (req.files && req.files.length > 0) {
+//       imageData = req.files.map((file) => ({
+//         filename: file.filename,
+//         originalname: file.originalname,
+//         size: file.size,
+//         mimetype: file.mimetype,
+//         url: `${req.protocol}://${req.get("host")}/uploads/${file.filename}`,
+//       }))
+//     }
+//     console.log("🖼️ Processed images:", imageData.length)
+
+//     // Process aChecks safely
+//     let parsedAChecks = []
+//     console.log("🔍 Raw aChecks:", typeof aChecks, aChecks)
+
+//     if (aChecks) {
+//       try {
+//         if (typeof aChecks === "string") {
+//           parsedAChecks = JSON.parse(aChecks)
+//         } else if (Array.isArray(aChecks)) {
+//           parsedAChecks = aChecks
+//         } else {
+//           parsedAChecks = []
+//         }
+//         console.log("✅ Parsed aChecks:", parsedAChecks.length, "items")
+//       } catch (parseError) {
+//         console.error("❌ Error parsing aChecks:", parseError)
+//         console.error("❌ aChecks value:", aChecks)
+//         parsedAChecks = []
+//       }
+//     }
+
+//     // Safely stringify JSON data
+//     const imagesJSON = safeJSONStringify(imageData, "[]")
+//     const aChecksJSON = safeJSONStringify(parsedAChecks, "[]")
+
+//     // FIXED: Format dates for database storage
+//     const formattedReviewDate = formatDateForDB(review_date)
+//     const formattedCalculatedFriday = formatDateForDB(finalCalculatedFriday)
+
+//     // Prepare values for database insertion
+//     const insertValues = [
+//       accessibility || null,
+//       third_party_content || null,
+//       conditional_response || null,
+//       website_type || null,
+//       registration_site || null,
+//       comments || null,
+//       website_operator || null,
+//       owner_name || null,
+//       formattedReviewDate,
+//       formattedCalculatedFriday,
+//       finalReviewMonth,
+//       finalReviewYear,
+//       review_traffic || null,
+//       imagesJSON,
+//       aChecksJSON,
+//       finalWebsiteSourceId || null,
+//     ]
+
+//     // Execute the INSERT query
+//     const insertQuery = `
+//       INSERT INTO workspace_data (
+//         accessibility, third_party_content, conditional_response, website_type,
+//         registration_site, comments, website_operator, owner_name, review_date,
+//         calculated_friday, review_month, review_year,
+//         review_traffic, images, a_checks, website_source_id
+//       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+//       RETURNING id
+//     `
+
+//     console.log("🔄 Executing database insert...")
+//     const result = await pool.query(insertQuery, insertValues)
+//     console.log("✅ Database insert successful! New ID:", result.rows[0].id)
+
+//     res.status(200).json({
+//       message: "Workstream submitted successfully!",
+//       id: result.rows[0].id,
+//       images: imageData,
+//       website_source_id: finalWebsiteSourceId,
+//       calculated_friday: finalCalculatedFriday,
+//       review_month: finalReviewMonth,
+//       review_year: finalReviewYear,
+//     })
+
+//     console.log("🎉 === FORM SUBMISSION SUCCESS ===")
+//   } catch (error) {
+//     console.error("💥 === FORM SUBMISSION ERROR ===")
+//     console.error("Error message:", error.message)
+//     console.error("Error code:", error.code)
+//     console.error("Error detail:", error.detail)
+//     console.error("Full error:", error)
+
+//     // Clean up uploaded files on error
+//     if (req.files) {
+//       req.files.forEach((file) => {
+//         fs.unlink(file.path, (err) => {
+//           if (err) console.error("Error deleting file:", err)
+//         })
+//       })
+//     }
+
+//     res.status(500).json({
+//       error: "Failed to submit workstream data",
+//       message: error.message,
+//       code: error.code,
+//       detail: error.detail,
+//     })
+//   }
+// })
+
+// // === FIXED: Get All Workstream Entries WITH proper date formatting ===
+// app.get("/api/workspace_data", async (req, res) => {
+//   try {
+//     const result = await pool.query(`
+//       SELECT 
+//         wd.*,
+//         ws.website_url
+//       FROM workspace_data wd
+//       LEFT JOIN website_sources ws ON wd.website_source_id = ws.id
+//       ORDER BY wd.id DESC
+//     `)
+
+//     // Format dates to avoid timezone issues
+//     const formattedData = result.rows.map((row) => ({
+//       ...row,
+//       review_date: formatDateFromDB(row.review_date),
+//       calculated_friday: formatDateFromDB(row.calculated_friday),
+//     }))
+
+//     res.json(formattedData)
+//   } catch (err) {
+//     console.error("❌ Error fetching all workspace data:", err)
+//     res.status(500).json({ error: "Server Error", message: err.message })
+//   }
+// })
+
+// // === FIXED: Get Single Workstream Entry by ID WITH proper date formatting ===
+// app.get("/api/workspace_data/:id", async (req, res) => {
+//   const id = req.params.id
+
+//   try {
+//     console.log("🔍 Fetching workspace data for ID:", id)
+
+//     const result = await pool.query(
+//       `
+//       SELECT 
+//         wd.*,
+//         ws.website_url
+//       FROM workspace_data wd
+//       LEFT JOIN website_sources ws ON wd.website_source_id = ws.id
+//       WHERE wd.id = $1
+//     `,
+//       [id],
+//     )
+
+//     if (result.rows.length === 0) {
+//       return res.status(404).json({ message: "Record not found" })
+//     }
+
+//     // FIXED: Format dates to avoid timezone issues
+//     const record = result.rows[0]
+//     const formattedRecord = {
+//       ...record,
+//       review_date: formatDateFromDB(record.review_date),
+//       calculated_friday: formatDateFromDB(record.calculated_friday),
+//     }
+
+//     console.log("✅ Found record with formatted dates:", {
+//       original_review_date: record.review_date,
+//       formatted_review_date: formattedRecord.review_date,
+//       original_calculated_friday: record.calculated_friday,
+//       formatted_calculated_friday: formattedRecord.calculated_friday,
+//     })
+
+//     res.json(formattedRecord)
+//   } catch (err) {
+//     console.error("❌ Error fetching workspace_data by ID:", err)
+//     res.status(500).json({ message: "Server error", error: err.message })
+//   }
+// })
+
+// // === Update Workstream Entry by ID ===
+// app.put("/api/workspace_data/:id", async (req, res) => {
+//   const id = req.params.id
+//   console.log("🔄 Updating record ID:", id)
+//   console.log("📝 Update data received:", req.body)
+
+//   try {
+//     const {
+//       accessibility,
+//       third_party_content,
+//       conditional_response,
+//       website_type,
+//       registration_site,
+//       comments,
+//       website_operator,
+//       owner_name,
+//       review_date,
+//       calculated_friday,
+//       review_month,
+//       review_year,
+//       review_traffic,
+//       website_source_id,
+//       website_url,
+//       a_checks,
+//     } = req.body
+
+//     // Handle website URL updates
+//     let finalWebsiteSourceId = website_source_id
+
+//     if (website_url && (!website_source_id || website_source_id === "")) {
+//       console.log("🔍 Finding/creating website source for URL:", website_url)
+//       try {
+//         const existingUrl = await pool.query("SELECT id FROM website_sources WHERE website_url = $1", [website_url])
+//         if (existingUrl.rows.length > 0) {
+//           finalWebsiteSourceId = existingUrl.rows[0].id
+//           console.log("✅ Found existing URL with ID:", finalWebsiteSourceId)
+//         } else {
+//           const newUrl = await pool.query("INSERT INTO website_sources (website_url) VALUES ($1) RETURNING id", [
+//             website_url,
+//           ])
+//           finalWebsiteSourceId = newUrl.rows[0].id
+//           console.log("✅ Created new URL with ID:", finalWebsiteSourceId)
+//         }
+//       } catch (urlError) {
+//         console.error("❌ Error handling website URL:", urlError)
+//         throw new Error(`Website URL error: ${urlError.message}`)
+//       }
+//     }
+
+//     // FIXED: Calculate date fields with proper date handling
+//     const finalCalculatedFriday = calculated_friday || getFridayOfWeek(review_date)
+//     const { month, year } = getMonthAndYear(review_date)
+//     const finalReviewMonth = review_month || month
+//     const finalReviewYear = review_year || year
+
+//     // FIXED: Format dates for database storage
+//     const formattedReviewDate = formatDateForDB(review_date)
+//     const formattedCalculatedFriday = formatDateForDB(finalCalculatedFriday)
+
+//     console.log("📅 Final calculated values:")
+//     console.log("- formatted_review_date:", formattedReviewDate)
+//     console.log("- formatted_calculated_friday:", formattedCalculatedFriday)
+//     console.log("- review_month:", finalReviewMonth)
+//     console.log("- review_year:", finalReviewYear)
+//     console.log("- website_source_id:", finalWebsiteSourceId)
+
+//     const updateQuery = `
+//       UPDATE workspace_data SET 
+//         accessibility = $1,
+//         third_party_content = $2,
+//         conditional_response = $3,
+//         website_type = $4,
+//         registration_site = $5,
+//         comments = $6,
+//         website_operator = $7,
+//         owner_name = $8,
+//         review_date = $9,
+//         calculated_friday = $10,
+//         review_month = $11,
+//         review_year = $12,
+//         review_traffic = $13,
+//         website_source_id = $14,
+//         a_checks = $15
+//       WHERE id = $16
+//       RETURNING *
+//     `
+
+//     const updateValues = [
+//       accessibility,
+//       third_party_content,
+//       conditional_response,
+//       website_type,
+//       registration_site,
+//       comments,
+//       website_operator,
+//       owner_name,
+//       formattedReviewDate,
+//       formattedCalculatedFriday,
+//       finalReviewMonth,
+//       finalReviewYear,
+//       review_traffic,
+//       finalWebsiteSourceId,
+//       a_checks || null,
+//       id,
+//     ]
+
+//     console.log("🔄 Executing update query...")
+//     const result = await pool.query(updateQuery, updateValues)
+
+//     if (result.rows.length === 0) {
+//       return res.status(404).json({ message: "Record not found" })
+//     }
+
+//     // Fetch the updated record with website_url and formatted dates for response
+//     const updatedRecord = await pool.query(
+//       `
+//       SELECT 
+//         wd.*,
+//         ws.website_url
+//       FROM workspace_data wd
+//       LEFT JOIN website_sources ws ON wd.website_source_id = ws.id
+//       WHERE wd.id = $1
+//     `,
+//       [id],
+//     )
+
+//     // Format dates in response
+//     const formattedUpdatedRecord = {
+//       ...updatedRecord.rows[0],
+//       review_date: formatDateFromDB(updatedRecord.rows[0].review_date),
+//       calculated_friday: formatDateFromDB(updatedRecord.rows[0].calculated_friday),
+//     }
+
+//     console.log("✅ Update successful")
+//     res.json({
+//       message: "Record updated successfully",
+//       data: formattedUpdatedRecord,
+//     })
+//   } catch (err) {
+//     console.error("❌ Error updating workspace_data:", err)
+//     res.status(500).json({ message: "Server error", error: err.message })
+//   }
+// })
+
+// // === Delete Workstream Entry by ID ===
+// app.delete("/api/workspace_data/:id", async (req, res) => {
+//   const id = req.params.id
+//   console.log("🗑️ Deleting record ID:", id)
+
+//   try {
+//     // First, check if the record exists and get any associated image files
+//     const existingRecord = await pool.query("SELECT images FROM workspace_data WHERE id = $1", [id])
+
+//     if (existingRecord.rows.length === 0) {
+//       return res.status(404).json({ message: "Record not found" })
+//     }
+
+//     // Parse and clean up associated image files
+//     const record = existingRecord.rows[0]
+//     if (record.images) {
+//       try {
+//         const images = typeof record.images === "string" ? JSON.parse(record.images) : record.images
+//         if (Array.isArray(images)) {
+//           images.forEach((image) => {
+//             if (image.filename) {
+//               const filePath = path.join(__dirname, "uploads", image.filename)
+//               fs.unlink(filePath, (err) => {
+//                 if (err) {
+//                   console.error("❌ Error deleting image file:", err)
+//                 } else {
+//                   console.log("✅ Deleted image file:", image.filename)
+//                 }
+//               })
+//             }
+//           })
+//         }
+//       } catch (parseError) {
+//         console.error("❌ Error parsing images for cleanup:", parseError)
+//       }
+//     }
+
+//     // Delete the record from database
+//     const deleteResult = await pool.query("DELETE FROM workspace_data WHERE id = $1 RETURNING id", [id])
+
+//     if (deleteResult.rows.length === 0) {
+//       return res.status(404).json({ message: "Record not found" })
+//     }
+
+//     console.log("✅ Record deleted successfully:", id)
+//     res.json({
+//       message: "Record deleted successfully",
+//       deletedId: id,
+//     })
+//   } catch (err) {
+//     console.error("❌ Error deleting workspace_data:", err)
+//     res.status(500).json({ message: "Server error", error: err.message })
+//   }
+// })
+
+// // === Error Middleware ===
+// app.use((error, req, res, next) => {
+//   console.error("❌ Unhandled error:", error)
+//   res.status(500).json({ error: "Something went wrong!", message: error.message })
+// })
+
+// // === Start Server ===
+// app.listen(port, () => {
+//   console.log(`🚀 Server is running on http://localhost:${port}`)
+//   console.log(`📋 Available endpoints:
+//   → GET    /api/workspace_data (fetch all records) ✅ FIXED DATE FORMATTING
+//   → GET    /api/workspace_data/:id (fetch single record) ✅ FIXED DATE FORMATTING  
+//   → POST   /submit-workstream (create new record) ✅ FIXED DATE HANDLING
+//   → PUT    /api/workspace_data/:id (update record) ✅ FIXED DATE HANDLING
+//   → DELETE /api/workspace_data/:id (delete record)`)
+// })
+
+
+
+
+
+
+
+// without image upload
+// const express = require("express")
+// const cors = require("cors")
+// const { Pool } = require("pg")
+// const multer = require("multer")
+// const path = require("path")
+// const fs = require("fs")
+// require("dotenv").config()
+
+// const app = express()
+// const port = process.env.PORT || 5000
+
+// // Create uploads directory if it doesn't exist
+// const uploadsDir = path.join(__dirname, "uploads")
+// if (!fs.existsSync(uploadsDir)) {
+//   fs.mkdirSync(uploadsDir, { recursive: true })
+// }
+
+// // === Middleware ===
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     credentials: true,
+//   }),
+// )
+// app.use(express.json())
+// app.use("/uploads", express.static("uploads"))
+
+// // === Multer File Upload Config ===
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => cb(null, "uploads/"),
+//   filename: (req, file, cb) => {
+//     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9)
+//     cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname))
+//   },
+// })
+// const upload = multer({
+//   storage,
+//   limits: { fileSize: 10 * 1024 * 1024 },
+//   fileFilter: (req, file, cb) => {
+//     file.mimetype.startsWith("image/") ? cb(null, true) : cb(new Error("Only image files are allowed!"), false)
+//   },
+// })
+
+// // === PostgreSQL Connection ===
+// const pool = new Pool({
+//   user: "postgres",
+//   host: "localhost",
+//   database: "Workstream1",
+//   password: "Ayansh@03",
+//   port: 5432,
+// })
+
+// // === FINAL FIXED: Date handling functions ===
+// const isValidDateString = (dateStr) => {
+//   if (!dateStr || typeof dateStr !== "string") return false
+//   const dateRegex = /^\d{4}-\d{2}-\d{2}$/
+//   if (!dateRegex.test(dateStr)) return false
+
+//   const [year, month, day] = dateStr.split("-").map(Number)
+//   return year >= 1900 && year <= 2100 && month >= 1 && month <= 12 && day >= 1 && day <= 31
+// }
+
+// const getFridayOfWeek = (dateStr) => {
+//   if (!isValidDateString(dateStr)) {
+//     console.error("❌ Invalid date string:", dateStr)
+//     return null
+//   }
+
+//   try {
+//     const [year, month, day] = dateStr.split("-").map(Number)
+
+//     // Zeller's congruence for day of week calculation
+//     let adjustedMonth = month
+//     let adjustedYear = year
+
+//     if (month < 3) {
+//       adjustedMonth += 12
+//       adjustedYear -= 1
+//     }
+
+//     const q = day
+//     const m = adjustedMonth
+//     const k = adjustedYear % 100
+//     const j = Math.floor(adjustedYear / 100)
+
+//     const h = (q + Math.floor((13 * (m + 1)) / 5) + k + Math.floor(k / 4) + Math.floor(j / 4) - 2 * j) % 7
+//     const dayOfWeek = (h + 5) % 7 // 0=Monday, 1=Tuesday, ..., 4=Friday, 6=Sunday
+
+//     // Calculate days to add to get to Friday
+//     const daysToFriday = (4 - dayOfWeek + 7) % 7
+
+//     // Add days to get Friday
+//     let fridayDay = day + daysToFriday
+//     let fridayMonth = month
+//     let fridayYear = year
+
+//     // Handle month overflow
+//     const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+//     // Check for leap year
+//     if (fridayYear % 4 === 0 && (fridayYear % 100 !== 0 || fridayYear % 400 === 0)) {
+//       daysInMonth[1] = 29
+//     }
+
+//     if (fridayDay > daysInMonth[fridayMonth - 1]) {
+//       fridayDay = fridayDay - daysInMonth[fridayMonth - 1]
+//       fridayMonth += 1
+
+//       if (fridayMonth > 12) {
+//         fridayMonth = 1
+//         fridayYear += 1
+//       }
+//     }
+
+//     const result = `${fridayYear}-${String(fridayMonth).padStart(2, "0")}-${String(fridayDay).padStart(2, "0")}`
+//     console.log(`📅 getFridayOfWeek: ${dateStr} -> ${result}`)
+//     return result
+//   } catch (error) {
+//     console.error("❌ Error calculating Friday:", error)
+//     return null
+//   }
+// }
+
+// const getMonthAndYear = (dateStr) => {
+//   if (!isValidDateString(dateStr)) {
+//     return { month: null, year: null }
+//   }
+
+//   try {
+//     const [year, month] = dateStr.split("-").map(Number)
+//     const monthNames = [
+//       "January",
+//       "February",
+//       "March",
+//       "April",
+//       "May",
+//       "June",
+//       "July",
+//       "August",
+//       "September",
+//       "October",
+//       "November",
+//       "December",
+//     ]
+
+//     return {
+//       month: monthNames[month - 1],
+//       year: year,
+//     }
+//   } catch (error) {
+//     console.error("❌ Error calculating month/year:", error)
+//     return { month: null, year: null }
+//   }
+// }
+
+// // === CRITICAL: Ensure dates are stored and retrieved as pure strings ===
+// const ensureDateString = (dateValue) => {
+//   if (!dateValue) return null
+
+//   // If it's already a valid date string, return as-is
+//   if (typeof dateValue === "string" && isValidDateString(dateValue)) {
+//     return dateValue
+//   }
+
+//   // If it's a Date object, extract the date part
+//   if (dateValue instanceof Date) {
+//     const year = dateValue.getFullYear()
+//     const month = String(dateValue.getMonth() + 1).padStart(2, "0")
+//     const day = String(dateValue.getDate()).padStart(2, "0")
+//     return `${year}-${month}-${day}`
+//   }
+
+//   // If it's a string with time component, extract date part
+//   if (typeof dateValue === "string" && dateValue.includes("T")) {
+//     const datePart = dateValue.split("T")[0]
+//     if (isValidDateString(datePart)) {
+//       return datePart
+//     }
+//   }
+
+//   console.error("❌ Could not convert to date string:", dateValue)
+//   return null
+// }
+
+// // === Helper function to safely stringify JSON ===
+// const safeJSONStringify = (data, fallback = "[]") => {
+//   try {
+//     if (data === null || data === undefined) {
+//       return fallback
+//     }
+
+//     if (typeof data === "string") {
+//       const parsed = JSON.parse(data)
+//       return JSON.stringify(parsed)
+//     }
+
+//     return JSON.stringify(data)
+//   } catch (error) {
+//     console.error("❌ JSON stringify error:", error)
+//     return fallback
+//   }
+// }
+
+// // === Auto-suggest URL APIs ===
+// app.get("/api/website-sources", async (req, res) => {
+//   const { search } = req.query
+//   if (!search) return res.json([])
+
+//   try {
+//     const result = await pool.query("SELECT id, website_url FROM website_sources WHERE website_url ILIKE $1 LIMIT 10", [
+//       `%${search}%`,
+//     ])
+//     res.json(result.rows)
+//   } catch (error) {
+//     console.error("❌ /api/website-sources error:", error.message)
+//     res.status(500).json({ error: error.message })
+//   }
+// })
+
+// // === Submit Workstream Form ===
+// app.post("/submit-workstream", upload.array("images", 10), async (req, res) => {
+//   console.log("🚀 === FORM SUBMISSION START ===")
+//   console.log("📝 Request body dates:", {
+//     review_date: req.body.review_date,
+//     calculated_friday: req.body.calculated_friday,
+//   })
+
+//   try {
+//     const {
+//       accessibility,
+//       third_party_content,
+//       conditional_response,
+//       website_type,
+//       registration_site,
+//       comments,
+//       website_operator,
+//       owner_name,
+//       review_date,
+//       calculated_friday,
+//       review_month,
+//       review_year,
+//       review_traffic,
+//       aChecks,
+//       website_source_id,
+//       website_url,
+//     } = req.body
+
+//     // Handle website source ID
+//     let finalWebsiteSourceId = website_source_id
+
+//     if (!website_source_id && website_url) {
+//       console.log("🔍 Creating/finding website source for:", website_url)
+//       try {
+//         const existingUrl = await pool.query("SELECT id FROM website_sources WHERE website_url = $1", [website_url])
+//         if (existingUrl.rows.length > 0) {
+//           finalWebsiteSourceId = existingUrl.rows[0].id
+//         } else {
+//           const newUrl = await pool.query("INSERT INTO website_sources (website_url) VALUES ($1) RETURNING id", [
+//             website_url,
+//           ])
+//           finalWebsiteSourceId = newUrl.rows[0].id
+//         }
+//       } catch (urlError) {
+//         console.error("❌ Error handling website URL:", urlError)
+//         throw new Error(`Website URL error: ${urlError.message}`)
+//       }
+//     }
+
+//     // CRITICAL: Use exact dates from frontend, only calculate if missing
+//     const finalReviewDate = ensureDateString(review_date)
+//     const finalCalculatedFriday = ensureDateString(calculated_friday) || getFridayOfWeek(finalReviewDate)
+//     const { month, year } = getMonthAndYear(finalReviewDate)
+//     const finalReviewMonth = review_month || month
+//     const finalReviewYear = review_year || year
+
+//     console.log("📅 Final date values for DB:")
+//     console.log("- finalReviewDate:", finalReviewDate)
+//     console.log("- finalCalculatedFriday:", finalCalculatedFriday)
+//     console.log("- finalReviewMonth:", finalReviewMonth)
+//     console.log("- finalReviewYear:", finalReviewYear)
+
+//     // Process images and aChecks
+//     let imageData = []
+//     if (req.files && req.files.length > 0) {
+//       imageData = req.files.map((file) => ({
+//         filename: file.filename,
+//         originalname: file.originalname,
+//         size: file.size,
+//         mimetype: file.mimetype,
+//         url: `${req.protocol}://${req.get("host")}/uploads/${file.filename}`,
+//       }))
+//     }
+
+//     let parsedAChecks = []
+//     if (aChecks) {
+//       try {
+//         parsedAChecks = typeof aChecks === "string" ? JSON.parse(aChecks) : aChecks
+//       } catch (parseError) {
+//         console.error("❌ Error parsing aChecks:", parseError)
+//         parsedAChecks = []
+//       }
+//     }
+
+//     const imagesJSON = safeJSONStringify(imageData, "[]")
+//     const aChecksJSON = safeJSONStringify(parsedAChecks, "[]")
+
+//     // Execute the INSERT query with explicit date casting
+//     const insertQuery = `
+//       INSERT INTO workspace_data (
+//         accessibility, third_party_content, conditional_response, website_type,
+//         registration_site, comments, website_operator, owner_name, 
+//         review_date, calculated_friday, review_month, review_year,
+//         review_traffic, images, a_checks, website_source_id
+//       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::date, $10::date, $11, $12, $13, $14, $15, $16)
+//       RETURNING id, review_date, calculated_friday
+//     `
+
+//     const insertValues = [
+//       accessibility || null,
+//       third_party_content || null,
+//       conditional_response || null,
+//       website_type || null,
+//       registration_site || null,
+//       comments || null,
+//       website_operator || null,
+//       owner_name || null,
+//       finalReviewDate,
+//       finalCalculatedFriday,
+//       finalReviewMonth,
+//       finalReviewYear,
+//       review_traffic || null,
+//       imagesJSON,
+//       aChecksJSON,
+//       finalWebsiteSourceId || null,
+//     ]
+
+//     console.log("🔄 Executing database insert with values:", {
+//       review_date: finalReviewDate,
+//       calculated_friday: finalCalculatedFriday,
+//     })
+
+//     const result = await pool.query(insertQuery, insertValues)
+
+//     console.log("✅ Database insert successful!")
+//     console.log("📅 Returned from DB:", {
+//       id: result.rows[0].id,
+//       review_date: result.rows[0].review_date,
+//       calculated_friday: result.rows[0].calculated_friday,
+//     })
+
+//     res.status(200).json({
+//       message: "Workstream submitted successfully!",
+//       id: result.rows[0].id,
+//       images: imageData,
+//       website_source_id: finalWebsiteSourceId,
+//       // Return the exact dates that were stored
+//       stored_review_date: ensureDateString(result.rows[0].review_date),
+//       stored_calculated_friday: ensureDateString(result.rows[0].calculated_friday),
+//       calculated_friday: finalCalculatedFriday,
+//       review_month: finalReviewMonth,
+//       review_year: finalReviewYear,
+//     })
+//   } catch (error) {
+//     console.error("💥 === FORM SUBMISSION ERROR ===")
+//     console.error("Error:", error)
+
+//     if (req.files) {
+//       req.files.forEach((file) => {
+//         fs.unlink(file.path, (err) => {
+//           if (err) console.error("Error deleting file:", err)
+//         })
+//       })
+//     }
+
+//     res.status(500).json({
+//       error: "Failed to submit workstream data",
+//       message: error.message,
+//     })
+//   }
+// })
+
+// // === Get All Workstream Entries ===
+// app.get("/api/workspace_data", async (req, res) => {
+//   try {
+//     console.log("📋 Fetching all workspace data...")
+
+//     const result = await pool.query(`
+//       SELECT 
+//         wd.*,
+//         ws.website_url
+//       FROM workspace_data wd
+//       LEFT JOIN website_sources ws ON wd.website_source_id = ws.id
+//       ORDER BY wd.id DESC
+//     `)
+
+//     // Ensure dates are returned as strings
+//     const formattedData = result.rows.map((row) => ({
+//       ...row,
+//       review_date: ensureDateString(row.review_date),
+//       calculated_friday: ensureDateString(row.calculated_friday),
+//     }))
+
+//     console.log("📅 Sample formatted data:", {
+//       count: formattedData.length,
+//       first_record: formattedData[0]
+//         ? {
+//             id: formattedData[0].id,
+//             review_date: formattedData[0].review_date,
+//             calculated_friday: formattedData[0].calculated_friday,
+//           }
+//         : null,
+//     })
+
+//     res.json(formattedData)
+//   } catch (err) {
+//     console.error("❌ Error fetching all workspace data:", err)
+//     res.status(500).json({ error: "Server Error", message: err.message })
+//   }
+// })
+
+// // === Get Single Workstream Entry by ID ===
+// app.get("/api/workspace_data/:id", async (req, res) => {
+//   const id = req.params.id
+
+//   try {
+//     console.log("🔍 Fetching workspace data for ID:", id)
+
+//     const result = await pool.query(
+//       `
+//       SELECT 
+//         wd.*,
+//         ws.website_url
+//       FROM workspace_data wd
+//       LEFT JOIN website_sources ws ON wd.website_source_id = ws.id
+//       WHERE wd.id = $1
+//     `,
+//       [id],
+//     )
+
+//     if (result.rows.length === 0) {
+//       return res.status(404).json({ message: "Record not found" })
+//     }
+
+//     const record = result.rows[0]
+//     const formattedRecord = {
+//       ...record,
+//       review_date: ensureDateString(record.review_date),
+//       calculated_friday: ensureDateString(record.calculated_friday),
+//     }
+
+//     console.log("✅ Found record:", {
+//       id: formattedRecord.id,
+//       review_date: formattedRecord.review_date,
+//       calculated_friday: formattedRecord.calculated_friday,
+//     })
+
+//     res.json(formattedRecord)
+//   } catch (err) {
+//     console.error("❌ Error fetching workspace_data by ID:", err)
+//     res.status(500).json({ message: "Server error", error: err.message })
+//   }
+// })
+
+// // === Update and Delete endpoints (keeping existing logic) ===
+// app.put("/api/workspace_data/:id", async (req, res) => {
+//   const id = req.params.id
+//   console.log("🔄 Updating record ID:", id)
+
+//   try {
+//     const {
+//       accessibility,
+//       third_party_content,
+//       conditional_response,
+//       website_type,
+//       registration_site,
+//       comments,
+//       website_operator,
+//       owner_name,
+//       review_date,
+//       calculated_friday,
+//       review_month,
+//       review_year,
+//       review_traffic,
+//       website_source_id,
+//       website_url,
+//       a_checks,
+//     } = req.body
+
+//     // Handle website URL updates
+//     let finalWebsiteSourceId = website_source_id
+//     if (website_url && (!website_source_id || website_source_id === "")) {
+//       const existingUrl = await pool.query("SELECT id FROM website_sources WHERE website_url = $1", [website_url])
+//       if (existingUrl.rows.length > 0) {
+//         finalWebsiteSourceId = existingUrl.rows[0].id
+//       } else {
+//         const newUrl = await pool.query("INSERT INTO website_sources (website_url) VALUES ($1) RETURNING id", [
+//           website_url,
+//         ])
+//         finalWebsiteSourceId = newUrl.rows[0].id
+//       }
+//     }
+
+//     // Use exact values from frontend
+//     const finalReviewDate = ensureDateString(review_date)
+//     const finalCalculatedFriday = ensureDateString(calculated_friday) || getFridayOfWeek(finalReviewDate)
+//     const { month, year } = getMonthAndYear(finalReviewDate)
+//     const finalReviewMonth = review_month || month
+//     const finalReviewYear = review_year || year
+
+//     const updateQuery = `
+//       UPDATE workspace_data SET 
+//         accessibility = $1, third_party_content = $2, conditional_response = $3, website_type = $4,
+//         registration_site = $5, comments = $6, website_operator = $7, owner_name = $8,
+//         review_date = $9::date, calculated_friday = $10::date, review_month = $11, review_year = $12,
+//         review_traffic = $13, website_source_id = $14, a_checks = $15
+//       WHERE id = $16
+//       RETURNING *
+//     `
+
+//     const updateValues = [
+//       accessibility,
+//       third_party_content,
+//       conditional_response,
+//       website_type,
+//       registration_site,
+//       comments,
+//       website_operator,
+//       owner_name,
+//       finalReviewDate,
+//       finalCalculatedFriday,
+//       finalReviewMonth,
+//       finalReviewYear,
+//       review_traffic,
+//       finalWebsiteSourceId,
+//       a_checks || null,
+//       id,
+//     ]
+
+//     const result = await pool.query(updateQuery, updateValues)
+
+//     if (result.rows.length === 0) {
+//       return res.status(404).json({ message: "Record not found" })
+//     }
+
+//     // Fetch updated record with website_url
+//     const updatedRecord = await pool.query(
+//       `SELECT wd.*, ws.website_url FROM workspace_data wd
+//        LEFT JOIN website_sources ws ON wd.website_source_id = ws.id
+//        WHERE wd.id = $1`,
+//       [id],
+//     )
+
+//     const formattedUpdatedRecord = {
+//       ...updatedRecord.rows[0],
+//       review_date: ensureDateString(updatedRecord.rows[0].review_date),
+//       calculated_friday: ensureDateString(updatedRecord.rows[0].calculated_friday),
+//     }
+
+//     res.json({
+//       message: "Record updated successfully",
+//       data: formattedUpdatedRecord,
+//     })
+//   } catch (err) {
+//     console.error("❌ Error updating workspace_data:", err)
+//     res.status(500).json({ message: "Server error", error: err.message })
+//   }
+// })
+
+// app.delete("/api/workspace_data/:id", async (req, res) => {
+//   const id = req.params.id
+//   try {
+//     const existingRecord = await pool.query("SELECT images FROM workspace_data WHERE id = $1", [id])
+//     if (existingRecord.rows.length === 0) {
+//       return res.status(404).json({ message: "Record not found" })
+//     }
+
+//     // Clean up image files
+//     const record = existingRecord.rows[0]
+//     if (record.images) {
+//       try {
+//         const images = typeof record.images === "string" ? JSON.parse(record.images) : record.images
+//         if (Array.isArray(images)) {
+//           images.forEach((image) => {
+//             if (image.filename) {
+//               const filePath = path.join(__dirname, "uploads", image.filename)
+//               fs.unlink(filePath, (err) => {
+//                 if (err) console.error("❌ Error deleting image file:", err)
+//               })
+//             }
+//           })
+//         }
+//       } catch (parseError) {
+//         console.error("❌ Error parsing images for cleanup:", parseError)
+//       }
+//     }
+
+//     const deleteResult = await pool.query("DELETE FROM workspace_data WHERE id = $1 RETURNING id", [id])
+//     if (deleteResult.rows.length === 0) {
+//       return res.status(404).json({ message: "Record not found" })
+//     }
+
+//     res.json({ message: "Record deleted successfully", deletedId: id })
+//   } catch (err) {
+//     console.error("❌ Error deleting workspace_data:", err)
+//     res.status(500).json({ message: "Server error", error: err.message })
+//   }
+// })
+
+// // === Test endpoint to verify date handling ===
+// app.get("/api/test-dates", async (req, res) => {
+//   try {
+//     const testDate = "2025-06-16"
+//     const calculatedFriday = getFridayOfWeek(testDate)
+//     const { month, year } = getMonthAndYear(testDate)
+
+//     res.json({
+//       message: "Date calculation test",
+//       input_date: testDate,
+//       calculated_friday: calculatedFriday,
+//       month: month,
+//       year: year,
+//       timestamp: new Date().toISOString(),
+//     })
+//   } catch (error) {
+//     res.status(500).json({ error: error.message })
+//   }
+// })
+
+// app.listen(port, () => {
+//   console.log(`🚀 Server running on http://localhost:${port}`)
+//   console.log(`🧪 Test date calculation: http://localhost:${port}/api/test-dates`)
+// })
+
+
+
+// const express = require("express")
+// const cors = require("cors")
+// const { Pool } = require("pg")
+// const multer = require("multer")
+// const path = require("path")
+// const fs = require("fs")
+// require("dotenv").config()
+
+// const app = express()
+// const port = process.env.PORT || 5000
+
+// // Create uploads directory if it doesn't exist
+// const uploadsDir = path.join(__dirname, "uploads")
+// if (!fs.existsSync(uploadsDir)) {
+//   fs.mkdirSync(uploadsDir, { recursive: true })
+// }
+
+// // === Middleware ===
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     credentials: true,
+//   }),
+// )
+// app.use(express.json())
+// app.use("/uploads", express.static("uploads"))
+
+// // === Multer File Upload Config ===
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => cb(null, "uploads/"),
+//   filename: (req, file, cb) => {
+//     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9)
+//     cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname))
+//   },
+// })
+// const upload = multer({
+//   storage,
+//   limits: { fileSize: 10 * 1024 * 1024 },
+//   fileFilter: (req, file, cb) => {
+//     file.mimetype.startsWith("image/") ? cb(null, true) : cb(new Error("Only image files are allowed!"), false)
+//   },
+// })
+
+// // === PostgreSQL Connection ===
+// const pool = new Pool({
+//   user: "postgres",
+//   host: "localhost",
+//   database: "Workstream1",
+//   password: "Ayansh@03",
+//   port: 5432,
+// })
+
+// // === Date handling functions (keeping the same as before) ===
+// const isValidDateString = (dateStr) => {
+//   if (!dateStr || typeof dateStr !== "string") return false
+//   const dateRegex = /^\d{4}-\d{2}-\d{2}$/
+//   if (!dateRegex.test(dateStr)) return false
+
+//   const [year, month, day] = dateStr.split("-").map(Number)
+//   return year >= 1900 && year <= 2100 && month >= 1 && month <= 12 && day >= 1 && day <= 31
+// }
+
+// const getFridayOfWeek = (dateStr) => {
+//   if (!isValidDateString(dateStr)) {
+//     console.error("❌ Invalid date string:", dateStr)
+//     return null
+//   }
+
+//   try {
+//     const [year, month, day] = dateStr.split("-").map(Number)
+
+//     let adjustedMonth = month
+//     let adjustedYear = year
+
+//     if (month < 3) {
+//       adjustedMonth += 12
+//       adjustedYear -= 1
+//     }
+
+//     const q = day
+//     const m = adjustedMonth
+//     const k = adjustedYear % 100
+//     const j = Math.floor(adjustedYear / 100)
+
+//     const h = (q + Math.floor((13 * (m + 1)) / 5) + k + Math.floor(k / 4) + Math.floor(j / 4) - 2 * j) % 7
+//     const dayOfWeek = (h + 5) % 7
+
+//     const daysToFriday = (4 - dayOfWeek + 7) % 7
+
+//     let fridayDay = day + daysToFriday
+//     let fridayMonth = month
+//     let fridayYear = year
+
+//     const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+//     if (fridayYear % 4 === 0 && (fridayYear % 100 !== 0 || fridayYear % 400 === 0)) {
+//       daysInMonth[1] = 29
+//     }
+
+//     if (fridayDay > daysInMonth[fridayMonth - 1]) {
+//       fridayDay = fridayDay - daysInMonth[fridayMonth - 1]
+//       fridayMonth += 1
+
+//       if (fridayMonth > 12) {
+//         fridayMonth = 1
+//         fridayYear += 1
+//       }
+//     }
+
+//     const result = `${fridayYear}-${String(fridayMonth).padStart(2, "0")}-${String(fridayDay).padStart(2, "0")}`
+//     return result
+//   } catch (error) {
+//     console.error("❌ Error calculating Friday:", error)
+//     return null
+//   }
+// }
+
+// const getMonthAndYear = (dateStr) => {
+//   if (!isValidDateString(dateStr)) {
+//     return { month: null, year: null }
+//   }
+
+//   try {
+//     const [year, month] = dateStr.split("-").map(Number)
+//     const monthNames = [
+//       "January", "February", "March", "April", "May", "June",
+//       "July", "August", "September", "October", "November", "December",
+//     ]
+
+//     return {
+//       month: monthNames[month - 1],
+//       year: year,
+//     }
+//   } catch (error) {
+//     console.error("❌ Error calculating month/year:", error)
+//     return { month: null, year: null }
+//   }
+// }
+
+// const ensureDateString = (dateValue) => {
+//   if (!dateValue) return null
+
+//   if (typeof dateValue === "string" && isValidDateString(dateValue)) {
+//     return dateValue
+//   }
+
+//   if (dateValue instanceof Date) {
+//     const year = dateValue.getFullYear()
+//     const month = String(dateValue.getMonth() + 1).padStart(2, "0")
+//     const day = String(dateValue.getDate()).padStart(2, "0")
+//     return `${year}-${month}-${day}`
+//   }
+
+//   if (typeof dateValue === "string" && dateValue.includes("T")) {
+//     const datePart = dateValue.split("T")[0]
+//     if (isValidDateString(datePart)) {
+//       return datePart
+//     }
+//   }
+
+//   console.error("❌ Could not convert to date string:", dateValue)
+//   return null
+// }
+
+// const safeJSONStringify = (data, fallback = "[]") => {
+//   try {
+//     if (data === null || data === undefined) {
+//       return fallback
+//     }
+
+//     if (typeof data === "string") {
+//       const parsed = JSON.parse(data)
+//       return JSON.stringify(parsed)
+//     }
+
+//     return JSON.stringify(data)
+//   } catch (error) {
+//     console.error("❌ JSON stringify error:", error)
+//     return fallback
+//   }
+// }
+
+// // === Auto-suggest URL APIs ===
+// // app.get("/api/website-sources", async (req, res) => {
+// //   const { search } = req.query
+// //   if (!search) return res.json([])
+
+// //   try {
+// //     const result = await pool.query("SELECT id, website_url FROM website_sources WHERE website_url = $1 LIMIT 10", [
+// //       `%${search}%`,
+// //     ])
+// //     res.json(result.rows)
+// //   } catch (error) {
+// //     console.error("❌ /api/website-sources error:", error.message)
+// //     res.status(500).json({ error: error.message })
+// //   }
+// // })
+// // === Auto-suggest URL APIs ===
+// app.get("/api/website-sources", async (req, res) => {
+//   const { search } = req.query
+//   if (!search) return res.json([])
+
+//   try {
+//     const result = await pool.query("SELECT id, website_url FROM website_sources WHERE website_url ILIKE $1 LIMIT 10", [
+//       `%${search}%`,
+//     ])
+//     res.json(result.rows)
+//   } catch (error) {
+//     console.error("❌ /api/website-sources error:", error.message)
+//     res.status(500).json({ error: error.message })
+//   }
+// })
+
+// // === Submit Workstream Form ===
+// app.post("/submit-workstream", upload.array("images", 10), async (req, res) => {
+//   console.log("🚀 === FORM SUBMISSION START ===")
+  
+//   try {
+//     const {
+//       accessibility, third_party_content, conditional_response, website_type,
+//       registration_site, comments, website_operator, owner_name, review_date,
+//       calculated_friday, review_month, review_year, review_traffic, aChecks,
+//       website_source_id, website_url,
+//     } = req.body
+
+//     // Handle website source ID
+//     let finalWebsiteSourceId = website_source_id
+
+//     if (!website_source_id && website_url) {
+//       try {
+//         const existingUrl = await pool.query("SELECT id FROM website_sources WHERE website_url = $1", [website_url])
+//         if (existingUrl.rows.length > 0) {
+//           finalWebsiteSourceId = existingUrl.rows[0].id
+//         } else {
+//           const newUrl = await pool.query("INSERT INTO website_sources (website_url) VALUES ($1) RETURNING id", [
+//             website_url,
+//           ])
+//           finalWebsiteSourceId = newUrl.rows[0].id
+//         }
+//       } catch (urlError) {
+//         console.error("❌ Error handling website URL:", urlError)
+//         throw new Error(`Website URL error: ${urlError.message}`)
+//       }
+//     }
+
+//     const finalReviewDate = ensureDateString(review_date)
+//     const finalCalculatedFriday = ensureDateString(calculated_friday) || getFridayOfWeek(finalReviewDate)
+//     const { month, year } = getMonthAndYear(finalReviewDate)
+//     const finalReviewMonth = review_month || month
+//     const finalReviewYear = review_year || year
+
+//     // Process images and aChecks
+//     let imageData = []
+//     if (req.files && req.files.length > 0) {
+//       imageData = req.files.map((file) => ({
+//         filename: file.filename,
+//         originalname: file.originalname,
+//         size: file.size,
+//         mimetype: file.mimetype,
+//         url: `${req.protocol}://${req.get("host")}/uploads/${file.filename}`,
+//       }))
+//     }
+
+//     let parsedAChecks = []
+//     if (aChecks) {
+//       try {
+//         parsedAChecks = typeof aChecks === "string" ? JSON.parse(aChecks) : aChecks
+//       } catch (parseError) {
+//         console.error("❌ Error parsing aChecks:", parseError)
+//         parsedAChecks = []
+//       }
+//     }
+
+//     const imagesJSON = safeJSONStringify(imageData, "[]")
+//     const aChecksJSON = safeJSONStringify(parsedAChecks, "[]")
+
+//     const insertQuery = `
+//       INSERT INTO workspace_data (
+//         accessibility, third_party_content, conditional_response, website_type,
+//         registration_site, comments, website_operator, owner_name, 
+//         review_date, calculated_friday, review_month, review_year,
+//         review_traffic, images, a_checks, website_source_id
+//       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::date, $10::date, $11, $12, $13, $14, $15, $16)
+//       RETURNING id, review_date, calculated_friday
+//     `
+
+//     const insertValues = [
+//       accessibility || null, third_party_content || null, conditional_response || null,
+//       website_type || null, registration_site || null, comments || null,
+//       website_operator || null, owner_name || null, finalReviewDate,
+//       finalCalculatedFriday, finalReviewMonth, finalReviewYear,
+//       review_traffic || null, imagesJSON, aChecksJSON, finalWebsiteSourceId || null,
+//     ]
+
+//     const result = await pool.query(insertQuery, insertValues)
+
+//     res.status(200).json({
+//       message: "Workstream submitted successfully!",
+//       id: result.rows[0].id,
+//       images: imageData,
+//       website_source_id: finalWebsiteSourceId,
+//       stored_review_date: ensureDateString(result.rows[0].review_date),
+//       stored_calculated_friday: ensureDateString(result.rows[0].calculated_friday),
+//       calculated_friday: finalCalculatedFriday,
+//       review_month: finalReviewMonth,
+//       review_year: finalReviewYear,
+//     })
+//   } catch (error) {
+//     console.error("💥 === FORM SUBMISSION ERROR ===")
+//     console.error("Error:", error)
+
+//     if (req.files) {
+//       req.files.forEach((file) => {
+//         fs.unlink(file.path, (err) => {
+//           if (err) console.error("Error deleting file:", err)
+//         })
+//       })
+//     }
+
+//     res.status(500).json({
+//       error: "Failed to submit workstream data",
+//       message: error.message,
+//     })
+//   }
+// })
+
+// // === Get All Workstream Entries ===
+// app.get("/api/workspace_data", async (req, res) => {
+//   try {
+//     const result = await pool.query(`
+//       SELECT 
+//         wd.*,
+//         ws.website_url
+//       FROM workspace_data wd
+//       LEFT JOIN website_sources ws ON wd.website_source_id = ws.id
+//       ORDER BY wd.id DESC
+//     `)
+
+//     const formattedData = result.rows.map((row) => ({
+//       ...row,
+//       review_date: ensureDateString(row.review_date),
+//       calculated_friday: ensureDateString(row.calculated_friday),
+//     }))
+
+//     res.json(formattedData)
+//   } catch (err) {
+//     console.error("❌ Error fetching all workspace data:", err)
+//     res.status(500).json({ error: "Server Error", message: err.message })
+//   }
+// })
+
+// // === Get Single Workstream Entry by ID ===
+// app.get("/api/workspace_data/:id", async (req, res) => {
+//   const id = req.params.id
+
+//   try {
+//     const result = await pool.query(
+//       `
+//       SELECT 
+//         wd.*,
+//         ws.website_url
+//       FROM workspace_data wd
+//       LEFT JOIN website_sources ws ON wd.website_source_id = ws.id
+//       WHERE wd.id = $1
+//     `,
+//       [id],
+//     )
+
+//     if (result.rows.length === 0) {
+//       return res.status(404).json({ message: "Record not found" })
+//     }
+
+//     const record = result.rows[0]
+//     const formattedRecord = {
+//       ...record,
+//       review_date: ensureDateString(record.review_date),
+//       calculated_friday: ensureDateString(record.calculated_friday),
+//     }
+
+//     res.json(formattedRecord)
+//   } catch (err) {
+//     console.error("❌ Error fetching workspace_data by ID:", err)
+//     res.status(500).json({ message: "Server error", error: err.message })
+//   }
+// })
+
+// // === FIXED: Update Workstream Entry by ID - Handle both JSON and FormData ===
+// app.put("/api/workspace_data/:id", (req, res, next) => {
+//   // Check if request is multipart/form-data
+//   const contentType = req.get('Content-Type') || ''
+  
+//   if (contentType.includes('multipart/form-data')) {
+//     // Use multer for multipart requests
+//     upload.array("images", 10)(req, res, next)
+//   } else {
+//     // Skip multer for JSON requests
+//     next()
+//   }
+// }, async (req, res) => {
+//   const id = req.params.id
+//   console.log("🔄 Updating record ID:", id)
+//   console.log("📝 Content-Type:", req.get('Content-Type'))
+
+//   try {
+//     let formData
+//     let newImageFiles = []
+//     let existingImages = []
+
+//     // Handle different request types
+//     const contentType = req.get('Content-Type') || ''
+    
+//     if (contentType.includes('multipart/form-data')) {
+//       // FormData request (with new file uploads)
+//       console.log("📤 Processing FormData request")
+//       formData = req.body
+      
+//       // Handle new file uploads
+//       if (req.files && req.files.length > 0) {
+//         newImageFiles = req.files.map((file) => ({
+//           filename: file.filename,
+//           originalname: file.originalname,
+//           size: file.size,
+//           mimetype: file.mimetype,
+//           url: `${req.protocol}://${req.get("host")}/uploads/${file.filename}`,
+//         }))
+//       }
+      
+//       // Handle existing images
+//       if (formData.existing_images) {
+//         try {
+//           existingImages = JSON.parse(formData.existing_images)
+//         } catch (e) {
+//           console.error("Error parsing existing_images:", e)
+//           existingImages = []
+//         }
+//       }
+//     } else {
+//       // JSON request (no new file uploads)
+//       console.log("📤 Processing JSON request")
+//       formData = req.body
+      
+//       // Handle images from JSON
+//       if (formData.images) {
+//         try {
+//           existingImages = typeof formData.images === 'string' ? JSON.parse(formData.images) : formData.images
+//         } catch (e) {
+//           console.error("Error parsing images:", e)
+//           existingImages = []
+//         }
+//       }
+//     }
+
+//     const {
+//       accessibility, third_party_content, conditional_response, website_type,
+//       registration_site, comments, website_operator, owner_name, review_date,
+//       calculated_friday, review_month, review_year, review_traffic,
+//       website_source_id, website_url, a_checks,
+//     } = formData
+
+//     // Handle website URL updates
+//     let finalWebsiteSourceId = website_source_id
+//     if (website_url && (!website_source_id || website_source_id === "")) {
+//       const existingUrl = await pool.query("SELECT id FROM website_sources WHERE website_url = $1", [website_url])
+//       if (existingUrl.rows.length > 0) {
+//         finalWebsiteSourceId = existingUrl.rows[0].id
+//       } else {
+//         const newUrl = await pool.query("INSERT INTO website_sources (website_url) VALUES ($1) RETURNING id", [
+//           website_url,
+//         ])
+//         finalWebsiteSourceId = newUrl.rows[0].id
+//       }
+//     }
+
+//     // Calculate dates
+//     const finalReviewDate = ensureDateString(review_date)
+//     const finalCalculatedFriday = ensureDateString(calculated_friday) || getFridayOfWeek(finalReviewDate)
+//     const { month, year } = getMonthAndYear(finalReviewDate)
+//     const finalReviewMonth = review_month || month
+//     const finalReviewYear = review_year || year
+
+//     // Combine existing and new images
+//     const allImages = [...existingImages, ...newImageFiles]
+//     const imagesJSON = safeJSONStringify(allImages, "[]")
+
+//     console.log("📅 Final update values:")
+//     console.log("- Images:", { existing: existingImages.length, new: newImageFiles.length, total: allImages.length })
+//     console.log("- Review date:", finalReviewDate)
+//     console.log("- Calculated Friday:", finalCalculatedFriday)
+
+//     const updateQuery = `
+//       UPDATE workspace_data SET 
+//         accessibility = $1, third_party_content = $2, conditional_response = $3, website_type = $4,
+//         registration_site = $5, comments = $6, website_operator = $7, owner_name = $8,
+//         review_date = $9::date, calculated_friday = $10::date, review_month = $11, review_year = $12,
+//         review_traffic = $13, website_source_id = $14, a_checks = $15, images = $16
+//       WHERE id = $17
+//       RETURNING *
+//     `
+
+//     const updateValues = [
+//       accessibility, third_party_content, conditional_response, website_type,
+//       registration_site, comments, website_operator, owner_name,
+//       finalReviewDate, finalCalculatedFriday, finalReviewMonth, finalReviewYear,
+//       review_traffic, finalWebsiteSourceId, a_checks || null, imagesJSON, id,
+//     ]
+
+//     const result = await pool.query(updateQuery, updateValues)
+
+//     if (result.rows.length === 0) {
+//       return res.status(404).json({ message: "Record not found" })
+//     }
+
+//     // Fetch updated record with website_url
+//     const updatedRecord = await pool.query(
+//       `SELECT wd.*, ws.website_url FROM workspace_data wd
+//        LEFT JOIN website_sources ws ON wd.website_source_id = ws.id
+//        WHERE wd.id = $1`,
+//       [id],
+//     )
+
+//     const formattedUpdatedRecord = {
+//       ...updatedRecord.rows[0],
+//       review_date: ensureDateString(updatedRecord.rows[0].review_date),
+//       calculated_friday: ensureDateString(updatedRecord.rows[0].calculated_friday),
+//     }
+
+//     console.log("✅ Update successful")
+//     res.json({
+//       message: "Record updated successfully",
+//       data: formattedUpdatedRecord,
+//     })
+//   } catch (err) {
+//     console.error("❌ Error updating workspace_data:", err)
+    
+//     // Clean up uploaded files on error
+//     if (req.files) {
+//       req.files.forEach((file) => {
+//         fs.unlink(file.path, (err) => {
+//           if (err) console.error("Error deleting file:", err)
+//         })
+//       })
+//     }
+    
+//     res.status(500).json({ message: "Server error", error: err.message })
+//   }
+// })
+
+// // === Delete Workstream Entry by ID ===
+// app.delete("/api/workspace_data/:id", async (req, res) => {
+//   const id = req.params.id
+//   try {
+//     const existingRecord = await pool.query("SELECT images FROM workspace_data WHERE id = $1", [id])
+//     if (existingRecord.rows.length === 0) {
+//       return res.status(404).json({ message: "Record not found" })
+//     }
+
+//     // Clean up image files
+//     const record = existingRecord.rows[0]
+//     if (record.images) {
+//       try {
+//         const images = typeof record.images === "string" ? JSON.parse(record.images) : record.images
+//         if (Array.isArray(images)) {
+//           images.forEach((image) => {
+//             if (image.filename) {
+//               const filePath = path.join(__dirname, "uploads", image.filename)
+//               fs.unlink(filePath, (err) => {
+//                 if (err) console.error("❌ Error deleting image file:", err)
+//               })
+//             }
+//           })
+//         }
+//       } catch (parseError) {
+//         console.error("❌ Error parsing images for cleanup:", parseError)
+//       }
+//     }
+
+//     const deleteResult = await pool.query("DELETE FROM workspace_data WHERE id = $1 RETURNING id", [id])
+//     if (deleteResult.rows.length === 0) {
+//       return res.status(404).json({ message: "Record not found" })
+//     }
+
+//     res.json({ message: "Record deleted successfully", deletedId: id })
+//   } catch (err) {
+//     console.error("❌ Error deleting workspace_data:", err)
+//     res.status(500).json({ message: "Server error", error: err.message })
+//   }
+// })
+
+// // === Test endpoint ===
+// app.get("/api/test-dates", async (req, res) => {
+//   try {
+//     const testDate = "2025-06-16"
+//     const calculatedFriday = getFridayOfWeek(testDate)
+//     const { month, year } = getMonthAndYear(testDate)
+
+//     res.json({
+//       message: "Date calculation test",
+//       input_date: testDate,
+//       calculated_friday: calculatedFriday,
+//       month: month,
+//       year: year,
+//       timestamp: new Date().toISOString(),
+//     })
+//   } catch (error) {
+//     res.status(500).json({ error: error.message })
+//   }
+// })
+
+// app.listen(port, () => {
+//   console.log(`🚀 Server running on http://localhost:${port}`)
+//   console.log(`🧪 Test date calculation: http://localhost:${port}/api/test-dates`)
+// })
