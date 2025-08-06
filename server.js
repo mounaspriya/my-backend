@@ -7869,22 +7869,32 @@ const upload = multer({
 
 // const { Pool } = require("pg");
 
-const pool = new Pool(
-  process.env.DATABASE_URL
-    ? {
-        connectionString: process.env.DATABASE_URL,
-        ssl: {
-          rejectUnauthorized: false,
-        },
-      }
-    : {
-        user: "postgres",
-        host: "localhost",
-        database: "Workstream1",
-        password: "Ayansh@03",
-        port: 5432,
-      }
-);
+// const pool = new Pool(
+//   process.env.DATABASE_URL
+//     ? {
+//         connectionString: process.env.DATABASE_URL,
+//         ssl: {
+//           rejectUnauthorized: false,
+//         },
+//       }
+//     : {
+//         user: "postgres",
+//         host: "localhost",
+//         database: "Workstream1",
+//         password: "Ayansh@03",
+//         port: 5432,
+//       }
+// );
+
+const { Pool } = require("pg");
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false, // Required for Render hosted PostgreSQL
+  },
+});
+
 
 
 // === ACL Setup ===
