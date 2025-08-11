@@ -878,35 +878,106 @@ app.post("/api/auth/register", async (req, res) => {
 })
 
 // Login Route
+// app.post("/api/auth/login", async (req, res) => {
+//   try {
+//     const { email, password } = req.body
+//     console.log("🔐 Login attempt for:", email)
+//     if (!email || !password) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Email and password are required",
+//       })
+//     }
+//     const userResult = await pool.query("SELECT * FROM users WHERE email = $1", [email])
+//     if (userResult.rows.length === 0) {
+//       return res.status(401).json({
+//         success: false,
+//         message: "Invalid email or password",
+//       })
+//     }
+//     const user = userResult.rows[0]
+//     const isValidPassword = await bcrypt.compare(password, user.password)
+//     if (!isValidPassword) {
+//       return res.status(401).json({
+//         success: false,
+//         message: "Invalid email or password",
+//       })
+//     }
+//     await acl.addUserRoles(user.id.toString(), user.role)
+//     const token = jwt.sign({ userId: user.id, email: user.email, role: user.role }, JWT_SECRET, {
+//       expiresIn: "24h",
+//     })
+//     console.log("✅ Login successful for:", email, "Role:", user.role)
+//     res.json({
+//       success: true,
+//       message: "Login successful",
+//       token,
+//       user: {
+//         id: user.id,
+//         name: user.name,
+//         email: user.email,
+//         role: user.role,
+//       },
+//     })
+//   } catch (error) {
+//     console.error("❌ Login error:", error)
+//     res.status(500).json({
+//       success: false,
+//       message: "Internal server error",
+//     })
+//   }
+// })
+
+// In your server.js, replace the login route with this enhanced version
 app.post("/api/auth/login", async (req, res) => {
   try {
     const { email, password } = req.body
     console.log("🔐 Login attempt for:", email)
+    console.log("📊 Request body:", { email: email, password: password ? "***" : "missing" })
+
     if (!email || !password) {
+      console.log("❌ Missing email or password")
       return res.status(400).json({
         success: false,
         message: "Email and password are required",
       })
     }
+
+    console.log("🔍 Querying database for user:", email)
     const userResult = await pool.query("SELECT * FROM users WHERE email = $1", [email])
+    console.log("📊 Database query result:", { 
+      found: userResult.rows.length > 0,
+      userExists: userResult.rows.length > 0 ? "YES" : "NO"
+    })
+
     if (userResult.rows.length === 0) {
+      console.log("❌ User not found in database")
       return res.status(401).json({
         success: false,
         message: "Invalid email or password",
       })
     }
+
     const user = userResult.rows[0]
+    console.log("👤 User found:", { id: user.id, email: user.email, role: user.role })
+    console.log("🔒 Comparing passwords...")
+    
     const isValidPassword = await bcrypt.compare(password, user.password)
+    console.log("🔒 Password comparison result:", isValidPassword ? "VALID" : "INVALID")
+
     if (!isValidPassword) {
+      console.log("❌ Invalid password")
       return res.status(401).json({
         success: false,
         message: "Invalid email or password",
       })
     }
+
     await acl.addUserRoles(user.id.toString(), user.role)
     const token = jwt.sign({ userId: user.id, email: user.email, role: user.role }, JWT_SECRET, {
       expiresIn: "24h",
     })
+
     console.log("✅ Login successful for:", email, "Role:", user.role)
     res.json({
       success: true,
@@ -921,6 +992,8 @@ app.post("/api/auth/login", async (req, res) => {
     })
   } catch (error) {
     console.error("❌ Login error:", error)
+    console.error("❌ Error details:", error.message)
+    console.error("❌ Error stack:", error.stack)
     res.status(500).json({
       success: false,
       message: "Internal server error",
