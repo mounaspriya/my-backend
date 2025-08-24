@@ -93,7 +93,7 @@ const pool = new Pool(
     : {
         user: "postgres",
         host: "localhost",
-        database: "Workstream1",
+        database: "workstream1",
         password: "Ayansh@03",
         port: 5432,
       }
