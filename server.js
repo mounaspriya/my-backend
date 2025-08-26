@@ -2250,14 +2250,35 @@ const pool = new Pool(
           rejectUnauthorized: false,
         },
       }
-    : {
-        user: "postgres",
+    :  {
+        user: "idatauser",
         host: "localhost",
-        database: "Workstream1",
-        password: "Ayansh@03",
+        database: "dbidatagbit",
+        password: "xyz76@#^598cc",
         port: 5432,
-      },
+      }
 )
+
+
+
+//for production
+//  {
+//         user: "idatauser",
+//         host: "localhost",
+//         database: "dbidatagbit",
+//         password: "xyz76@#^598cc",
+//         port: 5432,
+//       }
+
+// for local
+// {
+//         user: "postgres",
+//         host: "localhost",
+//         database: "Workstream1",
+//         password: "Ayansh@03",
+//         port: 5432,
+//       },
+
 
 // === ACL Setup ===
 let acl
