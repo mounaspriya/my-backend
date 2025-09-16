@@ -5163,10 +5163,10 @@ const pool = new Pool(
         },
       }
     : {
-        user: "idatauser",
+        user: "postgres",
         host: "localhost",
-        database: "dbidatagbit",
-        password: "xyz76@#^598cc",
+        database: "Workstream1",
+        password: "Ayansh@03",
         port: 5432,
       },
 )
