@@ -7657,7 +7657,10 @@ const upload = multer({
 })
 
 const getImageUrl = (filename) => {
-  const baseUrl = process.env.NODE_ENV === "production" ? "https://idata.zaaprdigital.com" : "http://localhost:5000"
+  // Check multiple ways to detect production environment
+  const isProduction = process.env.NODE_ENV === "production" || process.env.DATABASE_URL || process.env.PORT !== "5000"
+
+  const baseUrl = isProduction ? "https://idata.zaaprdigital.com" : "http://localhost:5000"
   return `${baseUrl}/uploads/${filename}`
 }
 
@@ -7687,6 +7690,7 @@ const pool = new Pool(
         password: "xyz76@#^598cc",
         port: 5432,
       },
+      
 )
 
 //for production
