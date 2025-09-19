@@ -5059,7 +5059,7 @@
 
 
 
-// for workstream2 admin new
+// for workstream2 admin
 const express = require("express")
 const cors = require("cors")
 const bcrypt = require("bcryptjs")
@@ -5079,7 +5079,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "superSecretKey123!@#"
 
 const BASE_URL =
   process.env.NODE_ENV === "production"
-    ? "" // Use relative URLs in production
+    ? "https://idata.zaaprdigital.com" // Use production domain
     : `http://localhost:${port}` // Use localhost in development
 
 // Create uploads directory if it doesn't exist
@@ -6431,7 +6431,7 @@ app.post("/api/workstream", upload.array("images", 10), async (req, res) => {
         originalname: file.originalname,
         size: file.size,
         mimetype: file.mimetype,
-        url: BASE_URL ? `${BASE_URL}/uploads/${file.filename}` : `/uploads/${file.filename}`,
+        url: `${BASE_URL}/uploads/${file.filename}`,
       }))
     }
 
@@ -6698,7 +6698,7 @@ app.put(
             originalname: file.originalname,
             size: file.size,
             mimetype: file.mimetype,
-            url: BASE_URL ? `${BASE_URL}/uploads/${file.filename}` : `/uploads/${file.filename}`,
+            url: `${BASE_URL}/uploads/${file.filename}`,
           }))
         }
         if (formData.existing_images) {
