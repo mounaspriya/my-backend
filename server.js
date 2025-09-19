@@ -5078,7 +5078,10 @@ const port = process.env.PORT || 5000
 const JWT_SECRET = process.env.JWT_SECRET || "superSecretKey123!@#"
 
 const BASE_URL =
-  process.env.NODE_ENV === "production"
+  process.env.NODE_ENV === "production" ||
+  process.env.HOSTNAME?.includes("zaaprdigital") ||
+  process.env.HOST?.includes("zaaprdigital") ||
+  (typeof window === "undefined" && process.env.PORT && !process.env.LOCALHOST)
     ? "https://idata.zaaprdigital.com" // Use production domain
     : `http://localhost:${port}` // Use localhost in development
 
