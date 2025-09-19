@@ -5059,7 +5059,7 @@
 
 
 
-// new
+// for workstream2 admin new
 const express = require("express")
 const cors = require("cors")
 const bcrypt = require("bcryptjs")
@@ -5077,7 +5077,10 @@ const port = process.env.PORT || 5000
 // JWT Secret
 const JWT_SECRET = process.env.JWT_SECRET || "superSecretKey123!@#"
 
-const BASE_URL = process.env.BASE_URL || `http://localhost:${port}`
+const BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "" // Use relative URLs in production
+    : `http://localhost:${port}` // Use localhost in development
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, "uploads")
@@ -6428,7 +6431,7 @@ app.post("/api/workstream", upload.array("images", 10), async (req, res) => {
         originalname: file.originalname,
         size: file.size,
         mimetype: file.mimetype,
-        url: `${BASE_URL}/uploads/${file.filename}`,
+        url: BASE_URL ? `${BASE_URL}/uploads/${file.filename}` : `/uploads/${file.filename}`,
       }))
     }
 
@@ -6695,7 +6698,7 @@ app.put(
             originalname: file.originalname,
             size: file.size,
             mimetype: file.mimetype,
-            url: `${BASE_URL}/uploads/${file.filename}`,
+            url: BASE_URL ? `${BASE_URL}/uploads/${file.filename}` : `/uploads/${file.filename}`,
           }))
         }
         if (formData.existing_images) {
